@@ -1,0 +1,59 @@
+.shows-page {
+    padding: 1.5rem;
+}
+
+.shows-page h1 {
+    margin-bottom: 1rem;
+    font-size: 2rem;
+}
+
+.add-show-form {
+    margin-bottom: 2rem;
+}
+
+.add-show-form h2 {
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.add-show-form input {
+    display: block;
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.add-show-form button {
+    padding: 10px 15px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.add-show-form button:hover {
+    background-color: #45a049;
+}
+
+.shows-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.shows-table th,
+.shows-table td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.shows-table th {
+    background-color: #f4f4f4;
+}
+
+.shows-table tbody tr:hover {
+    background-color: #f1f1f1;
+}
