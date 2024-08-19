@@ -1,21 +1,39 @@
-useEffect(() => {
-  const mockReservations = [
-    {
-      id: "R001",
-      customerName: "John Doe",
-      movieTitle: "Avengers: Endgame",
-      showTime: "2024-08-20 7:00 PM",
-      seats: ["A1", "A2"],
-    },
-    {
-      id: "R002",
-      customerName: "Jane Smith",
-      movieTitle: "The Lion King",
-      showTime: "2024-08-20 5:00 PM",
-      seats: ["B3", "B4"],
-    },
-    // Add more mock data...
-  ];
+const data = [
+  {
+    id: 1,
+    customerName: "Alice Smith",
+    movieTitle: "The Matrix",
+    showTime: "2024-08-21T14:00:00Z",
+    seats: ["A1", "A2", "A3"],
+  },
+  {
+    id: 2,
+    customerName: "John Doe",
+    movieTitle: "Inception",
+    showTime: "2024-08-21T18:30:00Z",
+    seats: ["B4", "B5"],
+  },
+  {
+    id: 3,
+    customerName: "Emma Johnson",
+    movieTitle: "The Godfather",
+    showTime: "2024-08-22T20:00:00Z",
+    seats: ["C1", "C2"],
+  },
+  {
+    id: 4,
+    customerName: "Michael Brown",
+    movieTitle: "Pulp Fiction",
+    showTime: "2024-08-23T16:00:00Z",
+    seats: ["D5", "D6", "D7"],
+  },
+  {
+    id: 5,
+    customerName: "Sophia Williams",
+    movieTitle: "The Shawshank Redemption",
+    showTime: "2024-08-23T21:00:00Z",
+    seats: ["E2", "E3"],
+  },
+];
 
-  setReservations(mockReservations);
-}, []);
+export default data;

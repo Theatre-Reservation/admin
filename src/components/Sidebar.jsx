@@ -9,6 +9,7 @@ import {
   BsMenuButtonWideFill,
   BsFillGearFill,
 } from "react-icons/bs";
+import { Link } from "react-router-dom";
 
 function Sidebar({ openSidebarToggle, OpenSidebar }) {
   return (
@@ -27,39 +28,34 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
 
       <ul className="sidebar-list">
         <li className="sidebar-list-item">
-          <a href="">
-            <BsGrid1X2Fill className="icon" /> Dashboard
-          </a>
+          <Link to="/">
+            <BsGrid1X2Fill className="icon" /> Home
+          </Link>
         </li>
         <li className="sidebar-list-item">
-          <a href="">
-            <BsFillArchiveFill className="icon" /> Products
-          </a>
+          <Link to="/reportspage">
+            <BsFillArchiveFill className="icon" /> Reports
+          </Link>
         </li>
         <li className="sidebar-list-item">
-          <a href="">
-            <BsFillGrid3X3GapFill className="icon" /> Categories
-          </a>
+          <Link to="/seatpage">
+            <BsFillGrid3X3GapFill className="icon" /> Seats
+          </Link>
         </li>
         <li className="sidebar-list-item">
-          <a href="">
-            <BsPeopleFill className="icon" /> Customers
-          </a>
+          <Link to="/showspage">
+            <BsPeopleFill className="icon" /> Shows
+          </Link>
         </li>
         <li className="sidebar-list-item">
-          <a href="">
-            <BsListCheck className="icon" /> Inventory
-          </a>
+          <Link to="/reservationspage">
+            <BsListCheck className="icon" /> Reservations
+          </Link>
         </li>
         <li className="sidebar-list-item">
-          <a href="">
-            <BsMenuButtonWideFill className="icon" /> Reports
-          </a>
-        </li>
-        <li className="sidebar-list-item">
-          <a href="">
-            <BsFillGearFill className="icon" /> Setting
-          </a>
+          <Link to="/settings">
+            <BsFillGearFill className="icon" /> Settings
+          </Link>
         </li>
       </ul>
     </aside>
