@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 import { initialShows } from "./ShowsData";
 import "./Shows.css";
 
@@ -23,6 +24,13 @@ function ShowsPage() {
     setShows([...shows, newShowWithId]);
     setNewShow({ title: "", date: "", time: "" });
   };
+
+    (() => {
+      axios
+        .get("/api/v1/data")
+        .then((response) => console.log("hsjvz"))
+        .catch((error) => console.error("Error fetching data:", error));
+    }, []);
 
   return (
     <div className="shows-page">

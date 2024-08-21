@@ -1,26 +1,29 @@
 import React from "react";
+import {
+  BsFillBellFill,
+  BsFillEnvelopeFill,
+  BsPersonCircle,
+  BsSearch,
+  BsJustify,
+} from "react-icons/bs";
 import "./Header.css";
 
-const Header = () => {
+function Header({ OpenSidebar }) {
   return (
     <header className="header">
-      <div className="logo">
-        <h1>Admin Dashboard</h1>
-      </div>
-      <nav className="nav-links">
-        <ul>
-          <li>Home</li>
-          <li>Reservations</li>
-          <li>Shows</li>
-          <li>Reports</li>
-          <li>Settings</li>
-        </ul>
-      </nav>
       <div className="menu-icon">
-        <span>&#9776;</span>
+        <BsJustify className="icon" onClick={OpenSidebar} />
+      </div>
+      <div className="header-left">
+        <BsSearch className="icon" />
+      </div>
+      <div className="header-right">
+        <BsFillBellFill className="icon" />
+        <BsFillEnvelopeFill className="icon" />
+        <BsPersonCircle className="icon" />
       </div>
     </header>
   );
-};
+}
 
 export default Header;

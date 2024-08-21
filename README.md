@@ -1,10 +1,8 @@
 ### Admin
 
-theater-admin-dashboard/
-├── public/
-│   ├── index.html
-│   ├── favicon.ico
-│   └── ...
+theater-admin-dashboard
+
+<dev>
 ├── src/
 │   ├── assets/
 │   │   ├── images/
@@ -36,6 +34,6 @@ theater-admin-dashboard/
 │   ├── App.css
 │   ├── index.js
 │   └── index.css
-├── .gitignore
-├── package.json
 └── README.md
+
+</dev>

@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import "./Reservations.css";
 
-const ReservationsPage = () => {
+function ReservationsPage() {
   const [reservations, setReservations] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
 
-  useEffect(() => {
-    // Fetch reservation data from an API
+  // Fetch reservation data from an API
+  useEffect(async () => {
+    const response = await axios.get("/api/reservations");
     const fetchReservations = async () => {
-      // const data = await fetch("/api/reservations").then((res) => res.json());
       const data = [
         {
           id: 1,
@@ -114,6 +115,7 @@ const ReservationsPage = () => {
             <th>Actions</th>
           </tr>
         </thead>
+
         <tbody>
           {reservations.map((reservation) => (
             <tr key={reservation.id}>
@@ -123,7 +125,7 @@ const ReservationsPage = () => {
               <td>{reservation.showTime}</td>
               <td>{reservation.seats.join(", ")}</td>
               <td>
-                <button 
+                <button
                   className="edit-btn"
                   onClick={() => handleEdit(reservation.id)}
                 >
@@ -140,14 +142,16 @@ const ReservationsPage = () => {
           ))}
         </tbody>
       </table>
+
       <button
+        className="add-btn"
         onClick={() =>
           handleAdd({
-            // id: reservations.length + 1,
-            // customerName: "New Customer",
-            // movieTitle: "New Movie",
-            // showTime: "2024-08-26T19:00:00Z",
-            // seats: ["B1", "B2"],
+            id: reservations.length + 1,
+            customerName: "New Customer",
+            movieTitle: "New Movie",
+            showTime: "2024-08-26T19:00:00Z",
+            seats: ["B1", "B2"],
           })
         }
       >
@@ -155,6 +159,6 @@ const ReservationsPage = () => {
       </button>
     </div>
   );
-};
+}
 
 export default ReservationsPage;
