@@ -1,0 +1,76 @@
+.events-page {
+    padding: 1.5rem;
+}
+
+.events-page h1 {
+    margin-bottom: 1rem;
+    font-size: 2rem;
+}
+
+.add-event-form {
+    align-items: center;
+    margin-bottom: 2rem;
+    padding: auto;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+
+}
+
+.add-event-form h2 {
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.add-event-form input {
+    align-items: center;
+    display: block;
+    width: 50%;
+    padding: 8px;
+    margin: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.add-event-form textarea {
+    align-items: center;
+    display: block;
+    width: 50%;
+    padding: 8px;
+    margin: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.add-event-form button {
+    padding: 10px 15px;
+    background-color: #4CAF50;
+    color: white;
+    margin: 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.add-event-form button:hover {
+    background-color: #45a049;
+}
+
+.events-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.events-table th,
+.events-table td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.events-table th {
+    background-color: #f4f4f4;
+}
+
+.events-table tbody tr:hover {
+    background-color: #f1f1f1;
+}

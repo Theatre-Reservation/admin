@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { saveAs } from "file-saver";
 import "./Reports.css";
-// import { ReportData } from "./ReportData";
 import axios from "../../axios";
 
 function ReportsPage() {

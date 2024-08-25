@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "../../axios";
-import "./Shows.css";
+import "./Events.css";
 
-function ShowsPage() {
-  const [shows, setShows] = useState([]);
-  const [showForm, setShowForm] = useState(false);
-  const [newShow, setNewShow] = useState({
+function EventPage() {
+  const [Events, setEvents] = useState([]);
+  const [EventForm, setEventForm] = useState(false);
+  const [newEvent, setNewEvent] = useState({
     title: "",
     img_url: "",
     description: "",
@@ -14,40 +14,40 @@ function ShowsPage() {
     schedules: [{ date: "", time: "", theater_id: "" }],
   });
   const [editMode, setEditMode] = useState(false);
-  const [editingShowId, setEditingShowId] = useState(null);
+  const [editingEventId, setEditingEventId] = useState(null);
 
   useEffect(() => {
-    // Fetch shows from the backend API
+    // Fetch all the Events from the backend API
     axios
-      .get("shows")
-      .then((response) => setShows(response.data))
-      .catch((error) => console.error("Error fetching shows:", error));
+      .get("Events")
+      .then((response) => setEvents(response.data))
+      .catch((error) => console.error("Error fetching Events:", error));
   }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setNewShow({ ...newShow, [name]: value });
+    setNewEvent({ ...newEvent, [name]: value });
   };
 
   const handleScheduleChange = (index, e) => {
     const { name, value } = e.target;
-    const newSchedules = [...newShow.schedules];
+    const newSchedules = [...newEvent.schedules];
     newSchedules[index] = { ...newSchedules[index], [name]: value };
-    setNewShow({ ...newShow, schedules: newSchedules });
+    setNewEvent({ ...newEvent, schedules: newSchedules });
   };
 
   const handleAddSchedule = () => {
-    setNewShow({
-      ...newShow,
-      schedules: [...newShow.schedules, { date: "", time: "", theater_id: "" }],
+    setNewEvent({
+      ...newEvent,
+      schedules: [...newEvent.schedules, { date: "", time: "", theater_id: "" }],
     });
   };
 
-  const handleAddShow = async () => {
+  const handleAddEvent = async () => {
     try {
-      const response = await axios.post("/api/shows", newShow);
-      setShows([...shows, response.data]);
-      setNewShow({
+      const response = await axios.post("/api/events", newEvent);
+      setEvents([...Events, response.data]);
+      setNewEvent({
         title: "",
         img_url: "",
         description: "",
@@ -57,38 +57,38 @@ function ShowsPage() {
         time: "",
         theater_id: "",
       });
-      setShowForm(false);
+      setEventForm(false);
     } catch (error) {
-      console.error("Error adding show:", error);
+      console.error("Error adding Event:", error);
     }
   };
 
-  const handleEditShow = (show) => {
-    setNewShow({
-      title: show.title,
-      img_url: show.img_url,
-      description: show.description,
-      genre: show.genre,
-      duration: show.duration,
-      schedules: show.schedules,
+  const handleEditEvent = (Event) => {
+    setNewEvent({
+      title: Event.title,
+      img_url: Event.img_url,
+      description: Event.description,
+      genre: Event.genre,
+      duration: Event.duration,
+      schedules: Event.schedules,
     });
     setEditMode(true);
-    setEditingShowId(show._id);
+    setEditingEventId(Event._id);
   };
 
-  const handleDeleteShow = (id) => {
+  const handleDeleteEvent = (id) => {
     axios
-      .delete(`shows/${id}`)
+      .delete(`events/${id}`)
       .then(() => {
-        setShows(shows.filter((show) => show._id !== id));
+        setEvents(Events.filter((Event) => Event._id !== id));
       })
-      .catch((error) => console.error("Error deleting show:", error));
+      .catch((error) => console.error("Error deleting Event:", error));
   };
 
   return (
-    <div className="shows-page">
-      <h1>Shows</h1>
-      <table className="shows-table">
+    <div className="events-page">
+      <h1>Events</h1>
+      <table className="events-table">
         <thead>
           <tr>
             <th>Title</th>
@@ -100,14 +100,14 @@ function ShowsPage() {
           </tr>
         </thead>
         <tbody>
-          {shows.map((show) => (
-            <tr key={show._id}>
-              <td>{show.title}</td>
-              <td>{show.genre}</td>
-              <td>{show.description}</td>
-              <td>{show.duration} min</td>
+          {Events.map((Event) => (
+            <tr key={Event._id}>
+              <td>{Event.title}</td>
+              <td>{Event.genre}</td>
+              <td>{Event.description}</td>
+              <td>{Event.duration} min</td>
               <td>
-                {show.schedules.map((schedule, index) => (
+                {Event.schedules.map((schedule, index) => (
                   <div key={index}>
                     <p>
                       {schedule.date} at {schedule.time} - Theater:{" "}
@@ -117,8 +117,8 @@ function ShowsPage() {
                 ))}
               </td>
               <td>
-                <button onClick={() => handleEditShow(show)}>Edit</button>
-                <button onClick={() => handleDeleteShow(show._id)}>
+                <button onClick={() => handleEditEvent(Event)}>Edit</button>
+                <button onClick={() => handleDeleteEvent(Event._id)}>
                   Delete
                 </button>
               </td>
@@ -127,44 +127,44 @@ function ShowsPage() {
         </tbody>
       </table>
 
-      <div className="add-show-form">
-        <h2>{editMode ? "Edit Show" : "Add New Show"}</h2>
+      <div className="add-event-form">
+        <h2>{editMode ? "Edit Event" : "Add New Event"}</h2>
         <input
           type="text"
           name="title"
-          value={newShow.title}
+          value={newEvent.title}
           onChange={handleInputChange}
-          placeholder="Show Title"
+          placeholder="Event Title"
         />
         <input
           type="text"
           name="img_url"
-          value={newShow.img_url}
+          value={newEvent.img_url}
           onChange={handleInputChange}
           placeholder="Image URL"
         />
         <textarea
           name="description"
-          value={newShow.description}
+          value={newEvent.description}
           onChange={handleInputChange}
           placeholder="Description"
         />
-        <input
+        {/* <input
           type="text"
           name="genre"
-          value={newShow.genre}
+          value={newEvent.genre}
           onChange={handleInputChange}
           placeholder="Genre"
-        />
+        /> */}
         <input
           type="number"
           name="duration"
-          value={newShow.duration}
+          value={newEvent.duration}
           onChange={handleInputChange}
           placeholder="Duration (minutes)"
         />
 
-        {newShow.schedules.map((schedule, index) => (
+        {newEvent.schedules.map((schedule, index) => (
           <div key={index}>
             <input
               type="date"
@@ -178,22 +178,22 @@ function ShowsPage() {
               value={schedule.time}
               onChange={(e) => handleScheduleChange(index, e)}
             />
-            <input
+            {/* <input
               type="text"
               name="theater_id"
               value={schedule.theater_id}
               onChange={(e) => handleScheduleChange(index, e)}
               placeholder="Theater ID"
-            />
+            /> */}
           </div>
         ))}
         <button onClick={handleAddSchedule}>Add Another Schedule</button>
-        <button onClick={handleAddShow}>
-          {editMode ? "Update Show" : "Add Show"}
+        <button onClick={handleAddEvent}>
+          {editMode ? "Update Event" : "Add Event"}
         </button>
       </div>
     </div>
   );
 }
 
-export default ShowsPage;
+export default EventPage;

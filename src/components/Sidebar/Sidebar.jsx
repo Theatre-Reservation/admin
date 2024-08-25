@@ -44,8 +44,13 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
           </Link>
         </li>
         <li className="sidebar-list-item">
-          <Link to="/showspage">
-            <BsPeopleFill className="icon" /> Shows
+          <Link to="/moviespage">
+            <BsPeopleFill className="icon" /> movies
+          </Link>
+        </li>
+        <li className="sidebar-list-item">
+          <Link to="/eventspage">
+            <BsPeopleFill className="icon" /> Events
           </Link>
         </li>
         <li className="sidebar-list-item">

@@ -21,18 +21,20 @@ theater-admin-dashboard
 │   │       ├── Button.js
 │   │       └── Card.js
 │   ├── pages/
+│   │   ├── EventPagejs
 │   │   ├── DashboardPage.js
-│   │   ├── ReservationsPage.js
-│   │   ├── ShowsPage.js
-│   │   ├── SeatsPage.js
+│   │   ├── LoginPage.js
+│   │   ├── LoginPage.js
 │   │   ├── ReportsPage.js
-│   │   └── LoginPage.js
+│   │   ├── ReservationsPage.js
+│   │   ├── SeatsPage.js
+│   │   └── ShowsPage.js
 │   ├── services/
 │   │   ├── api.js
 │   │   └── auth.js
 │   ├── App.js
 │   ├── App.css
-│   ├── index.js
+│   ├── main.js
 │   └── index.css
 └── README.md
 
