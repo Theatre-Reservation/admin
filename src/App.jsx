@@ -9,6 +9,7 @@ import ReportsPage from "./pages/Report/Reports";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Home from "./pages/Home/Home";
 import "./App.css";
+import SettingsPage from "./pages/Setting/Setting";
 
 function App() {
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
@@ -36,8 +37,8 @@ function App() {
             <Route path="/seatpage" element={<SeatsPage />} />
             <Route path="/eventspage" element={<EventPage />} />
             <Route path="/moviespage" element={<MoviePage />} />
-
             <Route path="/reservationspage" element={<ReservationsPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
           </Routes>
         </div>
       </Router>

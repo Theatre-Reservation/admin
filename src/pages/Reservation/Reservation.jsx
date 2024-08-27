@@ -1,75 +1,45 @@
 import React, { useState, useEffect } from "react";
 import "./Reservations.css";
 import axios from "../../axios";
+// import data from "./Data"; 
+
 
 function ReservationsPage() {
   const [reservations, setReservations] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
+  const [editingReservation, setEditingReservation] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newReservation, setNewReservation] = useState({
+    customerName: "",
+    movieTitle: "",
+    showTime: "",
+    seats: "",
+  });
 
   // Fetch reservation data from an API
-  // useEffect(async () => {
-  //   const response = await axios.get("/api/reservations");
-  //   const fetchReservations = async () => {
-  const data = [
-    {
-      id: 1,
-      customerName: "Alice Smith",
-      movieTitle: "The Matrix",
-      showTime: "2024-08-21T14:00:00Z",
-      seats: ["A1", "A2", "A3"],
-    },
-    {
-      id: 2,
-      customerName: "John Doe",
-      movieTitle: "Inception",
-      showTime: "2024-08-21T18:30:00Z",
-      seats: ["B4", "B5"],
-    },
-    {
-      id: 3,
-      customerName: "Emma Johnson",
-      movieTitle: "The Godfather",
-      showTime: "2024-08-22T20:00:00Z",
-      seats: ["C1", "C2"],
-    },
-    {
-      id: 4,
-      customerName: "Michael Brown",
-      movieTitle: "Pulp Fiction",
-      showTime: "2024-08-23T16:00:00Z",
-      seats: ["D5", "D6", "D7"],
-    },
-    {
-      id: 5,
-      customerName: "Sophia Williams",
-      movieTitle: "The Shawshank Redemption",
-      showTime: "2024-08-23T21:00:00Z",
-      seats: ["E2", "E3"],
-    },
-  ];
-  //   setReservations(data);
-  // };
-
-  //   fetchReservations();
-  // }, []);
-
   useEffect(() => {
     const fetchReservations = async () => {
       const response = await axios.get("/reservations");
       console.log(response.data);
       setReservations(response.data);
     };
-
     fetchReservations();
   }, []);
 
+  // Function to delete a reservation
   const deleteReservation = async (id) => {
-    await fetch(`/api/reservations/${id}`, {
-      method: "DELETE",
-    });
-    setReservations(
-      reservations.filter((reservation) => reservation.id !== id)
-    );
+    try {
+      // Send a DELETE request using axios
+      await axios.delete(`/reservations/${id}`);
+
+      // Update the local state to remove the deleted reservation
+      setReservations(
+        reservations.filter((reservation) => reservation.id !== id)
+      );
+      console.log(`Reservation with ID ${id} deleted successfully.`);
+    } catch (error) {
+      console.error("Error deleting the reservation:", error);
+    }
   };
 
   const sortBy = (key) => {
@@ -92,23 +62,63 @@ function ReservationsPage() {
     setReservations(sortedData);
   };
 
+  // Function to handle editing a reservation
   const handleEdit = (id) => {
-    // Logic to handle editing a reservation
-    console.log(`Edit reservation with ID: ${id}`);
-    // Could open a modal with a form to edit the reservation
+    // Find the reservation by ID
+    const reservationToEdit = reservations.find((res) => res.id === id);
+    setEditingReservation(reservationToEdit);
+    setIsModalOpen(true); // Open the modal
+    saveReservation();
   };
 
-  const handleAdd = async (newReservation) => {
-    // Logic to post a new reservation
-    const response = await fetch("/api/reservations", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(newReservation),
-    });
-    const addedReservation = await response.json();
-    setReservations([...reservations, addedReservation]);
+  // Function to save edited reservation
+  const saveReservation = async () => {
+    try {
+      // Update the reservation in the backend
+      await axios.put(
+        `/reservations/${editingReservation.id}`,
+        editingReservation
+      );
+
+      // Update the reservation in the state
+      setReservations((prevReservations) =>
+        prevReservations.map((res) =>
+          res.id === editingReservation.id ? editingReservation : res
+        )
+      );
+
+      // Close the modal and reset editing state
+      setIsModalOpen(false);
+      setEditingReservation(null);
+    } catch (error) {
+      console.error("Error updating reservation:", error);
+    }
+  };
+
+const handleAdd = async (newReservation) => {
+  try {
+    // Post a new reservation using Axios
+    const response = await axios.post("/reservations", newReservation);
+
+    // Retrieve the added reservation from the response
+    const addedReservation = response.data;
+
+    // Update the reservations state with the newly added reservation
+    setReservations((prevReservations) => [
+      ...prevReservations,
+      addedReservation,
+    ]);
+
+    // Close the modal after adding
+    setIsModalOpen(false);
+  } catch (error) {
+    console.error("Error adding reservation:", error);
+  }
+};
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewReservation((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
@@ -120,12 +130,11 @@ function ReservationsPage() {
             <th onClick={() => sortBy("id")}>Reservation ID</th>
             <th onClick={() => sortBy("customerName")}>Customer Name</th>
             <th onClick={() => sortBy("movieTitle")}>Movie Title</th>
-            <th onClick={() => sortBy("showTime")}>Show Time</th>
-            <th onClick={() => sortBy("seats")}>Seats</th>
+            <th onClick={() => sortBy("showTime")}>Run Time</th>
+            <th>Seats</th>
             <th>Actions</th>
           </tr>
         </thead>
-
         <tbody>
           {reservations.map((reservation) => (
             <tr key={reservation.id}>
@@ -134,7 +143,7 @@ function ReservationsPage() {
               <td>{reservation.movieTitle}</td>
               <td>{reservation.showTime}</td>
               <td>{reservation.seats.join(", ")}</td>
-              <td>
+              <td className="edit-delete-btns">
                 <button
                   className="edit-btn"
                   onClick={() => handleEdit(reservation.id)}
@@ -153,20 +162,68 @@ function ReservationsPage() {
         </tbody>
       </table>
 
-      <button
-        className="add-btn"
-        onClick={() =>
-          handleAdd({
-            id: reservations.length + 1,
-            customerName: "New Customer",
-            movieTitle: "New Movie",
-            showTime: "2024-08-26T19:00:00Z",
-            seats: ["B1", "B2"],
-          })
-        }
-      >
+      <button className="add-btn" onClick={() => setIsModalOpen(true)}>
         Add Reservation
       </button>
+
+      {isModalOpen && (
+        <div className="modal">
+          <div className="modal-content">
+            <h2>Add New Reservation</h2>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleAdd(newReservation);
+              }}
+            >
+              <label>
+                Customer Name
+                <input
+                  type="text"
+                  name="customerName"
+                  value={newReservation.customerName}
+                  onChange={handleInputChange}
+                  required
+                />
+              </label>
+              <label>
+                Movie Title
+                <input
+                  type="text"
+                  name="movieTitle"
+                  value={newReservation.movieTitle}
+                  onChange={handleInputChange}
+                  required
+                />
+              </label>
+              <label>
+                Run Time
+                <input
+                  type="datetime-local"
+                  name="runTime"
+                  value={newReservation.runTime}
+                  onChange={handleInputChange}
+                  required
+                />
+              </label>
+              <label>
+                Seats (comma-separated)
+                <input
+                  type="text"
+                  name="seats"
+                  value={newReservation.seats}
+                  onChange={handleInputChange}
+                  required
+                />
+              </label>
+              <button type="submit">Submit</button>
+              <button type="button" onClick={() => setIsModalOpen(false)}>
+                Cancel
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

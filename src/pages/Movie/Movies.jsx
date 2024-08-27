@@ -4,17 +4,16 @@ import "./Movies.css";
 
 function MoviePage() {
   const [Movies, setMovies] = useState([]);
-  const [MovieForm, setMovieForm] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [newMovie, setNewMovie] = useState({
     title: "",
-    img_url: "",
+    language: "",
     description: "",
-    genre: "",
-    duration: "",
-    schedules: [{ date: "", time: "", theater_id: "" }],
+    main_genre: "",
+    runtime: "",
+    schedules: [{ date: "", time: "" }],
   });
   const [editMode, setEditMode] = useState(false);
-  const [editingMovieId, setEditingMovieId] = useState(null);
 
   useEffect(() => {
     // Fetch Movies from the backend API
@@ -39,41 +38,48 @@ function MoviePage() {
   const handleAddSchedule = () => {
     setNewMovie({
       ...newMovie,
-      schedules: [...newMovie.schedules, { date: "", time: "", theater_id: "" }],
+      schedules: [
+        ...newMovie.schedules,
+        { date: "", time: "", theater_id: "" },
+      ],
     });
   };
 
   const handleAddMovie = async () => {
     try {
-      const response = await axios.post("/api/movies", newMovie);
-      setMovies([...movies, response.data]);
+      const response = await axios.post("/movies", newMovie);
+      setMovies([...Movies, response.data]);
       setNewMovie({
         title: "",
-        img_url: "",
+        language: "",
         description: "",
-        genre: "",
-        duration: "",
-        date: "",
-        time: "",
-        theater_id: "",
+        main_genre: "",
+        runtime: "",
+        schedules: [{ date: "", time: "" }],
       });
-      setMovieForm(false);
+      setIsModalOpen(false); // Close modal after adding movie
     } catch (error) {
       console.error("Error adding Movie:", error);
     }
   };
 
-  const handleEditMovie = (Movie) => {
-    setNewMovie({
-      title: Movie.title,
-      img_url: Movie.img_url,
-      description: Movie.description,
-      genre: Movie.genre,
-      duration: Movie.duration,
-      schedules: Movie.schedules,
-    });
-    setEditMode(true);
-    setEditingMovieId(Movie._id);
+  const handleEditMovie = (_id) => {
+    axios
+      .put(`movies/${_id}`)
+      .then((Movie) => {
+        setNewMovie({
+          admin_id: Movie.admin_id,
+          title: Movie.title,
+          img_url: Movie.img_url,
+          description: Movie.description,
+          genre: Movie.genre,
+          duration: Movie.duration,
+          schedules: Movie.schedules,
+        });
+        setEditMode(true);
+        setIsModalOpen(true); // Open modal in edit mode
+      })
+      .catch((error) => console.error("Error updating Movie:", error));
   };
 
   const handleDeleteMovie = (id) => {
@@ -92,10 +98,11 @@ function MoviePage() {
         <thead>
           <tr>
             <th>Title</th>
+            <th>Language</th>
             <th>Genre</th>
-            <th>Description</th>
             <th>Duration</th>
-            <th>Schedules</th>
+            <th>Date</th>
+            <th>Time</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -103,22 +110,34 @@ function MoviePage() {
           {Movies.map((Movie) => (
             <tr key={Movie._id}>
               <td>{Movie.title}</td>
-              <td>{Movie.genre}</td>
-              <td>{Movie.description}</td>
-              <td>{Movie.duration} min</td>
+              <td>{Movie.language}</td>
+              <td>{Movie.main_genre}</td>
+              <td>{Movie.runtime}</td>
               <td>
                 {Movie.schedules.map((schedule, index) => (
                   <div key={index}>
-                    <p>
-                      {schedule.date} at {schedule.time} - Theater:{" "}
-                      {schedule.theater_id}
-                    </p>
+                    <p>{schedule.date}</p>
                   </div>
                 ))}
               </td>
               <td>
-                <button onClick={() => handleEditMovie(Movie)}>Edit</button>
-                <button onClick={() => handleDeleteMovie(Movie._id)}>
+                {Movie.schedules.map((schedule, index) => (
+                  <div key={index}>
+                    <p>{schedule.time}</p>
+                  </div>
+                ))}
+              </td>
+              <td className="edit-delete-btns">
+                <button
+                  className="edit-btn"
+                  onClick={() => handleEditMovie(Movie._id)}
+                >
+                  Edit
+                </button>
+                <button
+                  className="delete-btn"
+                  onClick={() => handleDeleteMovie(Movie._id)}
+                >
                   Delete
                 </button>
               </td>
@@ -127,71 +146,105 @@ function MoviePage() {
         </tbody>
       </table>
 
-      <div className="add-movie-form">
-        <h2>{editMode ? "Edit Movie" : "Add New movie"}</h2>
-        <input
-          type="text"
-          name="title"
-          value={newMovie.title}
-          onChange={handleInputChange}
-          placeholder="Movie Title"
-        />
-        <input
-          type="text"
-          name="img_url"
-          value={newMovie.img_url}
-          onChange={handleInputChange}
-          placeholder="Image URL"
-        />
-        <textarea
-          name="description"
-          value={newMovie.description}
-          onChange={handleInputChange}
-          placeholder="Description"
-        />
-        <input
-          type="text"
-          name="genre"
-          value={newMovie.genre}
-          onChange={handleInputChange}
-          placeholder="Genre"
-        />
-        <input
-          type="number"
-          name="duration"
-          value={newMovie.duration}
-          onChange={handleInputChange}
-          placeholder="Duration (minutes)"
-        />
+      <button className="add-btn" onClick={() => setIsModalOpen(true)}>
+        Add Movie
+      </button>
 
-        {newMovie.schedules.map((schedule, index) => (
-          <div key={index}>
-            <input
-              type="date"
-              name="date"
-              value={schedule.date}
-              onChange={(e) => handleScheduleChange(index, e)}
-            />
-            <input
-              type="time"
-              name="time"
-              value={schedule.time}
-              onChange={(e) => handleScheduleChange(index, e)}
-            />
-            {/* <input
-              type="text"
-              name="theater_id"
-              value={schedule.theater_id}
-              onChange={(e) => handleScheduleChange(index, e)}
-              placeholder="Theater ID"
-            /> */}
+      {isModalOpen && (
+        <div className="modal">
+          <div className="modal-content">
+            <h2>{editMode ? "Edit Movie" : "Add New Movie"}</h2>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleAddMovie();
+              }}
+            >
+              <label>
+                Title
+                <input
+                  type="text"
+                  name="title"
+                  value={newMovie.title}
+                  onChange={handleInputChange}
+                  placeholder="Movie Title"
+                />
+              </label>
+              <label>
+                Image URL
+                <input
+                  type="text"
+                  name="img_url"
+                  value={newMovie.img_url}
+                  onChange={handleInputChange}
+                  placeholder="Image URL"
+                />
+              </label>
+              <label>
+                Description
+                <textarea
+                  name="description"
+                  value={newMovie.description}
+                  onChange={handleInputChange}
+                  placeholder="Description"
+                />
+              </label>
+              <label>
+                Genre
+                <input
+                  type="text"
+                  name="genre"
+                  value={newMovie.genre}
+                  onChange={handleInputChange}
+                  placeholder="Genre"
+                />
+              </label>
+              <label>
+                Duration (minutes)
+                <input
+                  type="number"
+                  name="duration"
+                  value={newMovie.duration}
+                  onChange={handleInputChange}
+                  placeholder="Duration"
+                />
+              </label>
+
+              {newMovie.schedules.map((schedule, index) => (
+                <div key={index}>
+                  <label>
+                    Date
+                    <input
+                      type="date"
+                      name="date"
+                      value={schedule.date}
+                      onChange={(e) => handleScheduleChange(index, e)}
+                    />
+                  </label>
+                  <label>
+                    Time
+                    <input
+                      type="time"
+                      name="time"
+                      value={schedule.time}
+                      onChange={(e) => handleScheduleChange(index, e)}
+                    />
+                  </label>
+                </div>
+              ))}
+              <button type="button" onClick={handleAddSchedule}>
+                Add Another Schedule
+              </button>
+              <button type="submit">
+                {editMode ? "Update Movie" : "Add Movie"}
+              </button>
+              <button type="button" onClick={() => setIsModalOpen(false)}>
+                Cancel
+              </button>
+            </form>
           </div>
-        ))}
-        <button onClick={handleAddSchedule}>Add Another Schedule</button>
-        <button onClick={handleAddMovie}>
-          {editMode ? "Update Movie" : "Add Movie"}
-        </button>
-      </div>
+        </div>
+      )}
     </div>
   );
 }

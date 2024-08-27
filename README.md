@@ -24,7 +24,6 @@ theater-admin-dashboard
 │   │   ├── EventPagejs
 │   │   ├── DashboardPage.js
 │   │   ├── LoginPage.js
-│   │   ├── LoginPage.js
 │   │   ├── ReportsPage.js
 │   │   ├── ReservationsPage.js
 │   │   ├── SeatsPage.js
