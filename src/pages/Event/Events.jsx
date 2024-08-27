@@ -6,15 +6,19 @@ function EventPage() {
   const [events, setEvents] = useState([]);
   const [eventFormVisible, setEventFormVisible] = useState(false);
   const [newEvent, setNewEvent] = useState({
+    admin_id: "",
     title: "",
-    img_url: "",
     description: "",
-    genre: "",
-    duration: "",
-    schedules: [{ date: "", time: "", theater_id: "" }],
+    poster_path: "",
+    venue: "",
+    date: "",
+    time: "",
+    runtime: "",
+    price: "",
   });
   const [editMode, setEditMode] = useState(false);
-  const [editingEventId, setEditingEventId] = useState(null);
+  const [editingEventId, setEditingEventId] = useState("");
+  const admin_id = "64e1f26b2a91d130d5a14e3f";
 
   useEffect(() => {
     // Fetch all the events from the backend API
@@ -36,71 +40,82 @@ function EventPage() {
     setNewEvent((prevEvent) => ({ ...prevEvent, schedules: newSchedules }));
   };
 
-  const handleAddSchedule = () => {
-    setNewEvent((prevEvent) => ({
-      ...prevEvent,
-      schedules: [
-        ...prevEvent.schedules,
-        { date: "", time: "", theater_id: "" },
-      ],
-    }));
-  };
-
   const resetForm = () => {
     setNewEvent({
+      admin_id: "",
       title: "",
-      img_url: "",
       description: "",
-      genre: "",
-      duration: "",
-      schedules: [{ date: "", time: "", theater_id: "" }],
+      poster_path: "",
+      venue: "",
+      date: "",
+      time: "",
+      runtime: "",
+      price: "",
     });
     setEditMode(false);
     setEditingEventId(null);
   };
 
-  const handleAddOrEditEvent = async () => {
-    try {
-      if (editMode) {
-        // Update the existing event
-        const response = await axios.put(
-          `/api/events/${editingEventId}`,
-          newEvent
-        );
-        setEvents((prevEvents) =>
-          prevEvents.map((event) =>
-            event._id === editingEventId ? response.data : event
-          )
-        );
-      } else {
-        // Add a new event
-        const response = await axios.post("/api/events", newEvent);
-        setEvents((prevEvents) => [...prevEvents, response.data]);
-      }
-      resetForm();
-      setEventFormVisible(false);
-    } catch (error) {
-      console.error("Error adding/editing event:", error);
-    }
+  const handleAddOrEditEvent = () => {
+    console.log("dgfhj");
+    const url = editMode ? `events/${editingEventId}` : "events";
+    const method = editMode ? "put" : "post";
+
+    console.log("New Event:", newEvent);
+    console.log("URL:", url);
+    console.log("Method:", method);
+
+    axios({
+      method: method,
+      url: url,
+      data: newEvent,
+    })
+      .then((response) => {
+        console.log(`${editMode ? "Updated" : "Added"} event successfully!`);
+        setEditMode(false);
+        setEventFormVisible(false); // Close form after successful operation
+        // if (editMode) {
+        //   setEvents((prevEvents) =>
+        //     prevEvents.map((event) =>
+        //       event._id === editingEventId ? response.data : event
+        //     )
+        //   );
+        // } else {
+        //   setEvents((prevEvents) => [...prevEvents, response.data]);
+        // }
+        resetForm(); // Reset the form after successful add or edit
+      })
+      .catch((error) => console.error("Error adding/editing event:", error));
   };
 
-  const handleEditEvent = (event) => {
-    setNewEvent({
-      title: event.title,
-      img_url: event.img_url,
-      description: event.description,
-      genre: event.genre,
-      duration: event.duration,
-      schedules: event.schedules,
-    });
-    setEditMode(true);
-    setEditingEventId(event._id);
-    setEventFormVisible(true);
+  const handleEditEvent = (eventId) => {
+    console.log(eventId);
+    axios
+      .get(`events/${eventId}`) // Use GET request to fetch event data
+      .then((response) => {
+        console.log("Event details:", response.data);
+        const event = response.data; // Assume event data is in response.data
+        setEditingEventId(eventId);
+        setNewEvent({
+          admin_id: admin_id,
+          title: event.title,
+          description: event.description,
+          poster_path: event.poster_path,
+          venue: event.venue,
+          date: event.date,
+          time: event.time,
+          runtime: event.runtime,
+          price: event.price,
+        });
+        setEditMode(true);
+        setEventFormVisible(true); // Open form in edit mode
+      })
+      .catch((error) => console.error("Error fetching event details:", error));
   };
 
   const handleDeleteEvent = (id) => {
     axios
-      .delete(`/api/events/${id}`)
+      .delete(`events/${id}`)
       .then(() => {
         setEvents((prevEvents) =>
           prevEvents.filter((event) => event._id !== id)
@@ -111,18 +126,21 @@ function EventPage() {
 
   return (
     <div className="events-page">
-      <h1>Events</h1>
-      <button onClick={() => setEventFormVisible(!eventFormVisible)}>
-        {eventFormVisible ? "Hide Form" : "Add New Event"}
-      </button>
+      <div className="events-title-bar">
+        <h1>Events</h1>
+        <button className="add-btn" onClick={() => setEventFormVisible(true)}>
+          Add Event
+        </button>
+      </div>
+
       <table className="events-table">
         <thead>
           <tr>
             <th>Title</th>
-            <th>Genre</th>
-            <th>Description</th>
-            <th>Duration</th>
-            <th>Schedules</th>
+            <th>Venue</th>
+            <th>Date</th>
+            <th>Runtime</th>
+            <th>Price</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -130,22 +148,21 @@ function EventPage() {
           {events.map((event) => (
             <tr key={event._id}>
               <td>{event.title}</td>
-              <td>{event.genre}</td>
-              <td>{event.description}</td>
-              <td>{event.duration} min</td>
-              <td>
-                {event.schedules.map((schedule, index) => (
-                  <div key={index}>
-                    <p>
-                      {schedule.date} at {schedule.time} - Theater:{" "}
-                      {schedule.theater_id}
-                    </p>
-                  </div>
-                ))}
-              </td>
-              <td>
-                <button onClick={() => handleEditEvent(event)}>Edit</button>
-                <button onClick={() => handleDeleteEvent(event._id)}>
+              <td>{event.venue}</td>
+              <td>{event.date}</td>
+              <td>{event.runtime}</td>
+              <td>{event.ticket_price}</td>
+              <td className="edit-delete-btns">
+                <button
+                  className="edit-btn"
+                  onClick={() => handleEditEvent(event._id)}
+                >
+                  Edit
+                </button>
+                <button
+                  className="delete-btn"
+                  onClick={() => handleDeleteEvent(event._id)}
+                >
                   Delete
                 </button>
               </td>
@@ -155,70 +172,109 @@ function EventPage() {
       </table>
 
       {eventFormVisible && (
-        <div className="event-form">
-          <h2>{editMode ? "Edit Event" : "Add New Event"}</h2>
-          <input
-            type="text"
-            name="title"
-            value={newEvent.title}
-            onChange={handleInputChange}
-            placeholder="Event Title"
-          />
-          <input
-            type="text"
-            name="img_url"
-            value={newEvent.img_url}
-            onChange={handleInputChange}
-            placeholder="Image URL"
-          />
-          <textarea
-            name="description"
-            value={newEvent.description}
-            onChange={handleInputChange}
-            placeholder="Description"
-          />
-          <input
-            type="text"
-            name="genre"
-            value={newEvent.genre}
-            onChange={handleInputChange}
-            placeholder="Genre"
-          />
-          <input
-            type="number"
-            name="duration"
-            value={newEvent.duration}
-            onChange={handleInputChange}
-            placeholder="Duration (minutes)"
-          />
-
-          {newEvent.schedules.map((schedule, index) => (
-            <div key={index}>
-              <input
-                type="date"
-                name="date"
-                value={schedule.date}
-                onChange={(e) => handleScheduleChange(index, e)}
-              />
-              <input
-                type="time"
-                name="time"
-                value={schedule.time}
-                onChange={(e) => handleScheduleChange(index, e)}
-              />
-              <input
-                type="text"
-                name="theater_id"
-                value={schedule.theater_id}
-                onChange={(e) => handleScheduleChange(index, e)}
-                placeholder="Theater ID"
-              />
+        <div className="modal">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h2>{editMode ? "Edit Event" : "Add New Event"}</h2>
+              {/* Close icon */}
+              <span
+                className="close-icon"
+                onClick={() => setEventFormVisible(false)}
+              >
+                &times;
+              </span>
             </div>
-          ))}
-          <button onClick={handleAddSchedule}>Add Another Schedule</button>
-          <button onClick={handleAddOrEditEvent}>
-            {editMode ? "Update Event" : "Add Event"}
-          </button>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleAddOrEditEvent();
+              }}
+            >
+              <div className="form-content">
+                <div className="column">
+                  <label>
+                    <input
+                      type="text"
+                      name="title"
+                      value={newEvent.title}
+                      onChange={handleInputChange}
+                      placeholder="Event Title"
+                    />
+                  </label>
+                  <label>
+                    <textarea
+                      name="description"
+                      value={newEvent.description}
+                      onChange={handleInputChange}
+                      placeholder="Description"
+                    />
+                  </label>
+                  <label>
+                    <input
+                      type="text"
+                      name="poster_path"
+                      value={newEvent.poster_path}
+                      onChange={handleInputChange}
+                      placeholder="Image URL"
+                    />
+                  </label>
+                  <label>
+                    <input
+                      type="text"
+                      name="venue"
+                      value={newEvent.venue}
+                      onChange={handleInputChange}
+                      placeholder="Venue"
+                    />
+                  </label>
+                </div>
+                <div className="column">
+                  <label>
+                    Date
+                    <input
+                      type="Date"
+                      name="date"
+                      value={newEvent.duration}
+                      onChange={handleInputChange}
+                      placeholder="Date"
+                    />
+                  </label>
+                  <label>
+                    <input
+                      type="text"
+                      name="runtime"
+                      value={newEvent.runtime}
+                      onChange={handleInputChange}
+                      placeholder="Runtime"
+                    />
+                  </label>
+                  <label>
+                    Time
+                    <input
+                      type="time"
+                      name="time"
+                      value={newEvent.duration}
+                      onChange={handleInputChange}
+                      placeholder="Time"
+                    />
+                  </label>
+                  <label>
+                    <input
+                      type="number"
+                      name="price"
+                      value={newEvent.price}
+                      onChange={handleInputChange}
+                      placeholder="Price"
+                    />
+                  </label>
+                </div>
+              </div>
+
+              <button type="submit">
+                {editMode ? "Update Event" : "Add Event"}
+              </button>
+            </form>
+          </div>
         </div>
       )}
     </div>

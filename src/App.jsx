@@ -6,10 +6,10 @@ import EventPage from "./pages/Event/Events";
 import MoviePage from "./pages/Movie/Movies";
 import SeatsPage from "./pages/Seat/Seats";
 import ReportsPage from "./pages/Report/Reports";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Home from "./pages/Home/Home";
-import "./App.css";
 import SettingsPage from "./pages/Setting/Setting";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import "./App.css";
 
 function App() {
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
@@ -34,7 +34,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/reportspage" element={<ReportsPage />} />
-            <Route path="/seatpage" element={<SeatsPage />} />
+            {/* <Route path="/seatpage" element={<SeatsPage />} /> */}
             <Route path="/eventspage" element={<EventPage />} />
             <Route path="/moviespage" element={<MoviePage />} />
             <Route path="/reservationspage" element={<ReservationsPage />} />

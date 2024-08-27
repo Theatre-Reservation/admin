@@ -11,17 +11,16 @@ import "./Header.css";
 function Header({ OpenSidebar }) {
   return (
     <header className="header">
-      <div className="menu-icon">
-        <BsJustify className="icon" onClick={OpenSidebar} />
-      </div>
-      <div className="header-left">
+      <div className="header-search">
         <BsSearch className="icon" />
+        <input type="text" placeholder="Search" />
       </div>
-      <div className="header-right">
+      <div className="header-icons">
         <BsFillBellFill className="icon" />
         <BsFillEnvelopeFill className="icon" />
         <BsPersonCircle className="icon" />
       </div>
+      <BsJustify className="icon menu" onClick={OpenSidebar} />
     </header>
   );
 }

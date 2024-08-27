@@ -13,7 +13,7 @@ function ReservationsPage() {
     customerName: "",
     movieTitle: "",
     showTime: "",
-    seats: "",
+    seats: [],
   });
 
   // Fetch reservation data from an API
@@ -123,7 +123,12 @@ const handleAdd = async (newReservation) => {
 
   return (
     <div className="reservations-page">
-      <h1>Reservations</h1>
+      <div className="reservation-title-bar">
+        <h1>Reservations</h1>
+        <button className="add-btn" onClick={() => setIsModalOpen(true)}>
+          Add Reservation
+        </button>
+      </div>
       <table className="reservations-table">
         <thead>
           <tr>
@@ -162,10 +167,6 @@ const handleAdd = async (newReservation) => {
         </tbody>
       </table>
 
-      <button className="add-btn" onClick={() => setIsModalOpen(true)}>
-        Add Reservation
-      </button>
-
       {isModalOpen && (
         <div className="modal">
           <div className="modal-content">
@@ -177,22 +178,22 @@ const handleAdd = async (newReservation) => {
               }}
             >
               <label>
-                Customer Name
                 <input
                   type="text"
                   name="customerName"
                   value={newReservation.customerName}
                   onChange={handleInputChange}
+                  placeholder="customer name"
                   required
                 />
               </label>
               <label>
-                Movie Title
                 <input
                   type="text"
                   name="movieTitle"
                   value={newReservation.movieTitle}
                   onChange={handleInputChange}
+                  placeholder="movie title"
                   required
                 />
               </label>
@@ -207,12 +208,13 @@ const handleAdd = async (newReservation) => {
                 />
               </label>
               <label>
-                Seats (comma-separated)
+                {/* Seats (comma-separated) */}
                 <input
                   type="text"
                   name="seats"
                   value={newReservation.seats}
                   onChange={handleInputChange}
+                  placeholder="Seats (comma-separated)"
                   required
                 />
               </label>

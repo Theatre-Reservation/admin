@@ -23,23 +23,56 @@
     flex-direction: column;
     justify-content: space-around;
     padding: 8px 15px;
-    border-radius: 5px;
+    border-radius: 15px;
 }
 
 .card:first-child {
+    background-color: #0f3cb8;
+    animation: fadein 2s;
+    transition: background-color 0.3s;
+}
+
+@keyframes fadein {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.card:first-child:hover {
     background-color: #2962ff;
 }
 
 .card:nth-child(2) {
-    background-color: #ff6d00;
+    background-color: #d66006;
+    animation: fadein 2s;
+        transition: background-color 0.3s;
+}
+
+.card:nth-child(2):hover {
+        background-color: #f69449;
 }
 
 .card:nth-child(3) {
     background-color: #2e7d32;
+    animation: fadein 2s;
+        transition: background-color 0.3s;
+}
+
+.card:nth-child(3):hover {
+        background-color: #2bb732;
 }
 
 .card:nth-child(4) {
     background-color: #d50000;
+    animation: fadein 2s;
+        transition: background-color 0.3s;
+}
+
+.card:nth-child(4) :hover {
+        background-color: #ec2e2e;
 }
 
 .card-inner {

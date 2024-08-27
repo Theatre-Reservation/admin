@@ -8,6 +8,8 @@ import {
 
 import {
   BarChart,
+  PieChart,
+  Pie,
   Bar,
   Cell,
   XAxis,
@@ -20,14 +22,21 @@ import {
   Line,
 } from "recharts";
 
-import DashboardData from "./DashboardData";
+import DashboardData from "./DashboardData"; // Ensure this is correctly defined and imported
 import "./Dashboard.css";
 
 function Dashboard() {
+  const DashData = [
+    { name: "Group A", value: 400, color: "#0088FE" },
+    { name: "Group B", value: 300, color: "#00C49F" },
+    { name: "Group C", value: 300, color: "#FFBB28" },
+    { name: "Group D", value: 200, color: "#FF8042" },
+  ];
+
   return (
     <main className="main-container">
       <div className="main-title">
-        <h3>DASHBOARD</h3>
+        <h1>Dashboard</h1>
       </div>
 
       <div className="main-cards">
@@ -65,10 +74,9 @@ function Dashboard() {
       </div>
 
       <div className="charts">
-        <ResponsiveContainer width="100%" height="100%">
+        {/* Bar Chart */}
+        <ResponsiveContainer width="100%" height={300}>
           <BarChart
-            width={500}
-            height={300}
             data={DashboardData}
             margin={{
               top: 5,
@@ -87,10 +95,9 @@ function Dashboard() {
           </BarChart>
         </ResponsiveContainer>
 
-        <ResponsiveContainer width="100%" height="100%">
+        {/* Line Chart */}
+        <ResponsiveContainer width="100%" height={300}>
           <LineChart
-            width={500}
-            height={300}
             data={DashboardData}
             margin={{
               top: 5,
@@ -112,6 +119,27 @@ function Dashboard() {
             />
             <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
           </LineChart>
+        </ResponsiveContainer>
+
+        {/* Pie Chart */}
+        <ResponsiveContainer width="100%" height={300}>
+          <PieChart>
+            <Pie
+              data={DashData}
+              cx="50%"
+              cy="50%"
+              outerRadius={80}
+              fill="#8884d8"
+              dataKey="value"
+              label
+            >
+              {DashData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.color} />
+              ))}
+            </Pie>
+            <Tooltip />
+            <Legend />
+          </PieChart>
         </ResponsiveContainer>
       </div>
     </main>

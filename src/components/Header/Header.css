@@ -12,3 +12,32 @@
 .menu-icon {
     display: none;
 }
+
+.nav-item search-item {
+    display: none;
+}
+
+.header .header-search {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-right: auto;
+}
+
+.header .header-search input[type="text"] {
+    width: 250px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    height: 15px;
+    background-color: #f9f9f9;
+}
+
+.header .header-search .icon {
+    margin-right: 1rem;
+}
+
+.header .header-icons .icon {
+    margin-right: 1rem;
+}

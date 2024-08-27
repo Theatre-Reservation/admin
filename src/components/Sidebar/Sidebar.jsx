@@ -14,57 +14,62 @@ import "./Sidebar.css";
 
 function Sidebar({ openSidebarToggle, OpenSidebar }) {
   return (
-    <aside
-      id="sidebar"
-      className={openSidebarToggle ? "sidebar-responsive" : ""}
-    >
-      <div className="sidebar-title">
-        <div className="sidebar-brand">
-          <BsCart3 className="icon_header" /> Theatre
-        </div>
-        <span className="icon close_icon" onClick={OpenSidebar}>
-          X
-        </span>
-      </div>
+    <>
+      {!openSidebarToggle && (
+        <aside
+          id="sidebar"
+          className={openSidebarToggle ? "sidebar-responsive" : ""}
+        >
+          <div className="sidebar-title">
+            <div className="sidebar-brand">
+              {/* <BsCart3 className="icon" /> */}
+              <h1>Flash Ticket</h1>
+            </div>
+            <span className="icon close_icon" onClick={OpenSidebar}>
+              X
+            </span>
+          </div>
 
-      <ul className="sidebar-list">
-        <li className="sidebar-list-item">
-          <Link to="/">
-            <BsGrid1X2Fill className="icon" /> Dashboard
-          </Link>
-        </li>
-        <li className="sidebar-list-item">
-          <Link to="/reportspage">
-            <BsFillArchiveFill className="icon" /> Reports
-          </Link>
-        </li>
-        <li className="sidebar-list-item">
-          <Link to="/seatpage">
-            <BsFillGrid3X3GapFill className="icon" /> Seats
-          </Link>
-        </li>
-        <li className="sidebar-list-item">
-          <Link to="/moviespage">
-            <BsPeopleFill className="icon" /> movies
-          </Link>
-        </li>
-        <li className="sidebar-list-item">
-          <Link to="/eventspage">
-            <BsPeopleFill className="icon" /> Events
-          </Link>
-        </li>
-        <li className="sidebar-list-item">
-          <Link to="/reservationspage">
-            <BsListCheck className="icon" /> Reservations
-          </Link>
-        </li>
-        <li className="sidebar-list-item">
-          <Link to="/settings">
-            <BsFillGearFill className="icon" /> Settings
-          </Link>
-        </li>
-      </ul>
-    </aside>
+          <ul className="sidebar-list">
+            <li className="sidebar-list-item">
+              <Link to="/">
+                <BsGrid1X2Fill className="icon" /> Dashboard
+              </Link>
+            </li>
+            <li className="sidebar-list-item">
+              <Link to="/reportspage">
+                <BsFillArchiveFill className="icon" /> Reports
+              </Link>
+            </li>
+            <li className="sidebar-list-item">
+              <Link to="/seatpage">
+                <BsFillGrid3X3GapFill className="icon" /> Seats
+              </Link>
+            </li>
+            <li className="sidebar-list-item">
+              <Link to="/moviespage">
+                <BsPeopleFill className="icon" /> movies
+              </Link>
+            </li>
+            <li className="sidebar-list-item">
+              <Link to="/eventspage">
+                <BsPeopleFill className="icon" /> Events
+              </Link>
+            </li>
+            <li className="sidebar-list-item">
+              <Link to="/reservationspage">
+                <BsListCheck className="icon" /> Reservations
+              </Link>
+            </li>
+            <li className="sidebar-list-item">
+              <Link to="/settings">
+                <BsFillGearFill className="icon" /> Settings
+              </Link>
+            </li>
+          </ul>
+        </aside>
+      )}
+    </>
   );
 }
 
