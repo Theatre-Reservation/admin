@@ -22,16 +22,21 @@ import {
   Line,
 } from "recharts";
 
-import DashboardData from "./DashboardData"; // Ensure this is correctly defined and imported
+import DashboardData from "./DashboardData";
 import "./Dashboard.css";
+import Card from "../../components/Card/Card";
 
 function Dashboard() {
   const DashData = [
-    { name: "Group A", value: 400, color: "#0088FE" },
-    { name: "Group B", value: 300, color: "#00C49F" },
-    { name: "Group C", value: 300, color: "#FFBB28" },
-    { name: "Group D", value: 200, color: "#FF8042" },
+    { name: "Deadpool", value: 400, color: "#0088FE" },
+    { name: "Dune", value: 300, color: "#00C49F" },
+    { name: "Twisters", value: 300, color: "#FFBB28" },
+    { name: "Despicable", value: 100, color: "#FF8042" },
   ];
+
+  const Total_Revenue = (DashboardData) => {
+    DashboardData.map()
+  }
 
   return (
     <main className="main-container">
@@ -40,37 +45,10 @@ function Dashboard() {
       </div>
 
       <div className="main-cards">
-        <div className="card">
-          <div className="card-inner">
-            <h3>Total Booking</h3>
-            <BsFillArchiveFill className="card_icon" />
-          </div>
-          <h1>300</h1>
-        </div>
-
-        <div className="card">
-          <div className="card-inner">
-            <h3>Revenue</h3>
-            <BsFillGrid3X3GapFill className="card_icon" />
-          </div>
-          <h1>12</h1>
-        </div>
-
-        <div className="card">
-          <div className="card-inner">
-            <h3>Today's Users</h3>
-            <BsPeopleFill className="card_icon" />
-          </div>
-          <h1>33</h1>
-        </div>
-
-        <div className="card">
-          <div className="card-inner">
-            <h3>Alerts</h3>
-            <BsFillBellFill className="card_icon" />
-          </div>
-          <h1>42</h1>
-        </div>
+        <Card name="Total Booking" value="53" icon={BsFillArchiveFill} />
+        <Card name="Revenue" value="12" icon={BsFillGrid3X3GapFill} />
+        <Card name="Today's Users" value="33" icon={BsPeopleFill} />
+        <Card name="Shows" value="10" icon={BsFillBellFill} />
       </div>
 
       <div className="charts">
@@ -90,8 +68,8 @@ function Dashboard() {
             <YAxis />
             <Tooltip />
             <Legend />
-            <Bar dataKey="pv" fill="#8884d8" />
-            <Bar dataKey="uv" fill="#82ca9d" />
+            <Bar dataKey="Total_Customers" fill="#00C49F" />
+            <Bar dataKey="Revenue" fill="#f69449" />
           </BarChart>
         </ResponsiveContainer>
 
@@ -113,11 +91,12 @@ function Dashboard() {
             <Legend />
             <Line
               type="monotone"
-              dataKey="pv"
-              stroke="#8884d8"
+              dataKey="Total_Customers"
+              stroke="#00C49F"
               activeDot={{ r: 8 }}
             />
-            <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+            <Line type="monotone" dataKey="Revenue" stroke="#f69449" />
+            <Line type="monotone" dataKey="Trans_Amount" stroke="#0088FE" />
           </LineChart>
         </ResponsiveContainer>
 
@@ -126,12 +105,12 @@ function Dashboard() {
           <PieChart>
             <Pie
               data={DashData}
-              cx="50%"
-              cy="50%"
-              outerRadius={80}
-              fill="#8884d8"
-              dataKey="value"
-              label
+              margin={{
+                top: 0,
+                right: 30,
+                left: 20,
+                bottom: 15,
+              }}
             >
               {DashData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.color} />

@@ -43,7 +43,7 @@
 .download-btn:hover {
     background-color: #45a049;
 }
-
+/* 
 .report-result {
     margin-top: 30px;
     padding: 20px;
@@ -58,4 +58,31 @@
 
 .report-result p {
     white-space: pre-wrap;
+} */
+
+.report-result {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.report-result h2 {
+    font-size: 18px;
+    color: #007bff;
+    margin-bottom: 15px;
+}
+
+.report-result pre {
+    font-size: 16px;
+    line-height: 1.6;
+    background-color: #f4f4f4;
+    padding: 10px;
+    border-radius: 4px;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    color: black;
 }

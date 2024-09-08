@@ -11,6 +11,7 @@
     justify-content: space-between;
 }
 
+/* Cards */
 .main-cards {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
@@ -18,14 +19,7 @@
     margin: 15px 0;
 }
 
-.card {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    padding: 8px 15px;
-    border-radius: 15px;
-}
-
+/* Card 1 */
 .card:first-child {
     background-color: #0f3cb8;
     animation: fadein 2s;
@@ -45,45 +39,39 @@
     background-color: #2962ff;
 }
 
+/* Card 2 */
 .card:nth-child(2) {
     background-color: #d66006;
     animation: fadein 2s;
-        transition: background-color 0.3s;
+    transition: background-color 0.3s;
 }
 
 .card:nth-child(2):hover {
-        background-color: #f69449;
+    background-color: #f69449;
 }
 
+/* Card 3 */
 .card:nth-child(3) {
     background-color: #2e7d32;
     animation: fadein 2s;
-        transition: background-color 0.3s;
+    transition: background-color 0.3s;
 }
 
 .card:nth-child(3):hover {
-        background-color: #2bb732;
+    background-color: #38993d;
 }
 
+/* Card 4 */
 .card:nth-child(4) {
-    background-color: #d50000;
+    background-color: #008ad5;
     animation: fadein 2s;
-        transition: background-color 0.3s;
+    transition: background-color 0.3s;
 }
 
 .card:nth-child(4) :hover {
-        background-color: #ec2e2e;
+    background-color: #2ea6ec;
 }
 
-.card-inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.card-inner>.card_icon {
-    font-size: 25px;
-}
 
 .charts {
     display: grid;

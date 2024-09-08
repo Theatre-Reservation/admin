@@ -36,16 +36,11 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                 <BsGrid1X2Fill className="icon" /> Dashboard
               </Link>
             </li>
-            <li className="sidebar-list-item">
-              <Link to="/reportspage">
-                <BsFillArchiveFill className="icon" /> Reports
-              </Link>
-            </li>
-            <li className="sidebar-list-item">
+            {/* <li className="sidebar-list-item">
               <Link to="/seatpage">
-                <BsFillGrid3X3GapFill className="icon" /> Seats
+              <BsFillGrid3X3GapFill className="icon" /> Seats
               </Link>
-            </li>
+              </li> */}
             <li className="sidebar-list-item">
               <Link to="/moviespage">
                 <BsPeopleFill className="icon" /> movies
@@ -61,6 +56,11 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                 <BsListCheck className="icon" /> Reservations
               </Link>
             </li>
+              <li className="sidebar-list-item">
+                <Link to="/reportspage">
+                  <BsFillArchiveFill className="icon" /> Reports
+                </Link>
+              </li>
             <li className="sidebar-list-item">
               <Link to="/settings">
                 <BsFillGearFill className="icon" /> Settings

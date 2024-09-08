@@ -33,11 +33,11 @@ function App() {
           <Header OpenSidebar={OpenSidebar} />
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/reportspage" element={<ReportsPage />} />
             {/* <Route path="/seatpage" element={<SeatsPage />} /> */}
             <Route path="/eventspage" element={<EventPage />} />
             <Route path="/moviespage" element={<MoviePage />} />
             <Route path="/reservationspage" element={<ReservationsPage />} />
+            <Route path="/reportspage" element={<ReportsPage />} />
             <Route path="/settings" element={<SettingsPage />} />
           </Routes>
         </div>

@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "../../axios";
 import "./Movies.css";
+import { storage } from "../../firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 function MoviePage() {
+  const [uploading, setUploading] = useState(false);
   const [Movies, setMovies] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newMovie, setNewMovie] = useState({
@@ -22,6 +25,11 @@ function MoviePage() {
   const [editMode, setEditMode] = useState(false);
   const admin_id = "64e1f26b2a91d130d5a14e3f";
 
+  const [imageFile, setImageFile] = useState({
+    posterImage: null,
+    coverImage: null,
+  });
+
   useEffect(() => {
     // Fetch Movies from the backend API
     axios
@@ -33,6 +41,81 @@ function MoviePage() {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewMovie({ ...newMovie, [name]: value });
+  };
+
+  const handleFileChange = (event, name) => {
+    if (event.target.files[0]) {
+      setImageFile({ ...imageFile, [name]: event.target.files[0] });
+      // handleUpload();
+    }
+  };
+
+  const handleAddMovie_ = () => {
+    let poster_path = "";
+    let cover_path = "";
+    setUploading(true);
+
+    if (imageFile.coverImage && imageFile.posterImage) {
+      const storageRef = ref(storage, `images/${imageFile.posterImage.name}`);
+      uploadBytes(storageRef, imageFile.posterImage)
+        .then((snapshot) => {
+          getDownloadURL(snapshot.ref).then((url) => {
+            poster_path = url;
+            // setNewMovie({ ...newMovie, poster_path: url });
+            console.log("Poster Image File available at", url);
+
+            // upload the cover image
+            const storageRef = ref(
+              storage,
+              `images/${imageFile.coverImage.name}`
+            );
+
+            uploadBytes(storageRef, imageFile.coverImage) // Upload the file
+              .then((snapshot) => {
+                getDownloadURL(snapshot.ref).then((url) => {
+                  cover_path = url;
+                  setNewMovie({
+                    ...newMovie,
+                    poster_path: poster_path,
+                    cover_path: cover_path,
+                  });
+                  console.log("Cover Image File available at", url);
+
+                  const url_ = editMode ? `movies/${movieId}` : "movies";
+                  const method = editMode ? "put" : "post";
+                  console.log(newMovie);
+
+                  axios({
+                    method: method,
+                    url: url_,
+                    data: {
+                      newMovie,
+                      cover_path,
+                      poster_path,
+                      admin_id: admin_id,
+                    },
+                  })
+                    .then((response) => {
+                      console.log(
+                        `${editMode ? "Updated" : "Added"} movie successfully!`
+                      );
+                      console.log(response.data);
+                      setEditMode(false);
+                      setIsModalOpen(false); // Close modal after successful operation
+                      setUploading(false);
+                    })
+                    .catch((error) => {
+                      console.error("Error saving movie:", error);
+                      setUploading(false);
+                    });
+                });
+              });
+          });
+        })
+        .catch((error) => {
+          console.error("Error uploading file: ", error);
+        });
+    }
   };
 
   const handleScheduleChange = (index, e) => {
@@ -49,23 +132,23 @@ function MoviePage() {
     });
   };
 
-  const handleAddMovie = () => {
-    const url = editMode ? `movies/${movieId}` : "movies";
-    const method = editMode ? "put" : "post";
+  // const handleAddMovie = () => {
+  //   const url = editMode ? `movies/${movieId}` : "movies";
+  //   const method = editMode ? "put" : "post";
 
-    axios({
-      method: method,
-      url: url,
-      data: newMovie,
-    })
-      .then((response) => {
-        console.log(`${editMode ? "Updated" : "Added"} movie successfully!`);
-        console.log(response.data);
-        setEditMode(false);
-        setIsModalOpen(false); // Close modal after successful operation
-      })
-      .catch((error) => console.error("Error saving movie:", error));
-  };
+  //   axios({
+  //     method: method,
+  //     url: url,
+  //     data: newMovie,
+  //   })
+  //     .then((response) => {
+  //       console.log(`${editMode ? "Updated" : "Added"} movie successfully!`);
+  //       console.log(response.data);
+  //       setEditMode(false);
+  //       setIsModalOpen(false); // Close modal after successful operation
+  //     })
+  //     .catch((error) => console.error("Error saving movie:", error));
+  // };
 
   const handleEditMovie = (_id) => {
     axios
@@ -183,12 +266,7 @@ function MoviePage() {
                 &times;
               </span>
             </div>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleAddMovie();
-              }}
-            >
+            <form>
               <div className="form-content">
                 <div className="column">
                   <label>
@@ -238,6 +316,16 @@ function MoviePage() {
                     />
                   </label>
                   <label>
+                    Image URL
+                    <input
+                      type="file"
+                      name="poster_path"
+                      // value={newMovie.poster_path}
+                      onChange={(e) => handleFileChange(e, "posterImage")}
+                      placeholder="Image URL"
+                    />
+                  </label>
+                  {/* <label>
                     <input
                       type="text"
                       name="poster_path"
@@ -245,8 +333,18 @@ function MoviePage() {
                       onChange={handleInputChange}
                       placeholder="Image URL"
                     />
-                  </label>
+                  </label> */}
                   <label>
+                    Cover URL
+                    <input
+                      type="file"
+                      name="cover_path"
+                      // value={newMovie.cover_path}
+                      onChange={(e) => handleFileChange(e, "coverImage")}
+                      placeholder="Cover URL"
+                    />
+                  </label>
+                  {/* <label>
                     <input
                       type="text"
                       name="cover_path"
@@ -254,7 +352,7 @@ function MoviePage() {
                       onChange={handleInputChange}
                       placeholder="Cover URL"
                     />
-                  </label>
+                  </label> */}
                 </div>
                 <div className="column">
                   <label>
@@ -320,9 +418,15 @@ function MoviePage() {
               <button
                 type="submit"
                 className="form-submit"
-                onClick={handleAddMovie}
+                onClick={handleAddMovie_}
               >
-                {editMode ? "Update Movie" : "Add Movie"}
+                {}
+
+                {uploading
+                  ? "Uploading..."
+                  : editMode
+                  ? "Update Movie"
+                  : "Add Movie"}
               </button>
             </form>
           </div>

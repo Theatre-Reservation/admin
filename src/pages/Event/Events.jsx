@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "../../axios";
 import "./Events.css";
+import { storage } from "../../firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 function EventPage() {
+  const [uploading, setUploading] = useState(false);
   const [events, setEvents] = useState([]);
   const [eventFormVisible, setEventFormVisible] = useState(false);
   const [newEvent, setNewEvent] = useState({
@@ -20,8 +23,10 @@ function EventPage() {
   const [editingEventId, setEditingEventId] = useState("");
   const admin_id = "64e1f26b2a91d130d5a14e3f";
 
+  const [imageFile, setImageFile] = useState(null);
+
+  // Fetch all the events from the backend API
   useEffect(() => {
-    // Fetch all the events from the backend API
     axios
       .get("events")
       .then((response) => setEvents(response.data))
@@ -33,11 +38,58 @@ function EventPage() {
     setNewEvent((prevEvent) => ({ ...prevEvent, [name]: value }));
   };
 
-  const handleScheduleChange = (index, e) => {
-    const { name, value } = e.target;
-    const newSchedules = [...newEvent.schedules];
-    newSchedules[index] = { ...newSchedules[index], [name]: value };
-    setNewEvent((prevEvent) => ({ ...prevEvent, schedules: newSchedules }));
+  const handleFileChange = (event) => {
+    if (event.target.files[0]) {
+      setImageFile(event.target.files[0]);
+    }
+  };
+
+  const handleUpload = () => {
+    setUploading(true);
+    if (imageFile) {
+      const storageRef = ref(storage, `images/${imageFile.name}`);
+      uploadBytes(storageRef, imageFile)
+        .then((snapshot) => {
+          getDownloadURL(snapshot.ref).then((url) => {
+            setNewEvent({ ...newEvent, poster_path: url });
+            console.log("File available at", url);
+
+            const url_ = editMode ? `events/${editingEventId}` : "events";
+            const method = editMode ? "put" : "post";
+
+            axios({
+              method: method,
+              url: url_,
+              data: { ...newEvent, poster_path: url },
+            })
+              .then((response) => {
+                console.log(
+                  `${editMode ? "Updated" : "Added"} event successfully!`
+                );
+                setEditMode(false);
+                setEventFormVisible(false); // Close form after successful operation
+                if (editMode) {
+                  setEvents((prevEvents) =>
+                    prevEvents.map((event) =>
+                      event._id === editingEventId ? response.data : event
+                    )
+                  );
+                } else {
+                  setEvents((prevEvents) => [...prevEvents, response.data]);
+                }
+                resetForm(); // Reset the form after successful add or edit
+                setUploading(false);
+              })
+              .catch((error) => {
+                console.error("Error adding/editing event:", error);
+                setUploading(false);
+              });
+          });
+        })
+        .catch((error) => {
+          console.error("Error uploading file: ", error);
+        });
+    }
   };
 
   const resetForm = () => {
@@ -74,15 +126,15 @@ function EventPage() {
         console.log(`${editMode ? "Updated" : "Added"} event successfully!`);
         setEditMode(false);
         setEventFormVisible(false); // Close form after successful operation
-        // if (editMode) {
-        //   setEvents((prevEvents) =>
-        //     prevEvents.map((event) =>
-        //       event._id === editingEventId ? response.data : event
-        //     )
-        //   );
-        // } else {
-        //   setEvents((prevEvents) => [...prevEvents, response.data]);
-        // }
+        if (editMode) {
+          setEvents((prevEvents) =>
+            prevEvents.map((event) =>
+              event._id === editingEventId ? response.data : event
+            )
+          );
+        } else {
+          setEvents((prevEvents) => [...prevEvents, response.data]);
+        }
         resetForm(); // Reset the form after successful add or edit
       })
       .catch((error) => console.error("Error adding/editing event:", error));
@@ -209,15 +261,19 @@ function EventPage() {
                       placeholder="Description"
                     />
                   </label>
-                  <label>
-                    <input
-                      type="text"
-                      name="poster_path"
-                      value={newEvent.poster_path}
-                      onChange={handleInputChange}
-                      placeholder="Image URL"
-                    />
-                  </label>
+                  <div>
+                    <label>
+                      Image URL
+                      <input
+                        type="file"
+                        name="poster_path"
+                        // value={newEvent.poster_path}
+                        onChange={handleFileChange}
+                        placeholder="Image URL"
+                      />
+                    </label>
+                    {/* <button onClick={handleUpload}>Upload Image</button> */}
+                  </div>
                   <label>
                     <input
                       type="text"
@@ -270,8 +326,12 @@ function EventPage() {
                 </div>
               </div>
 
-              <button type="submit">
-                {editMode ? "Update Event" : "Add Event"}
+              <button type="submit" onClick={handleUpload}>
+                {uploading
+                  ? "Uploading..."
+                  : editMode
+                  ? "Update Event"
+                  : "Add Event"}
               </button>
             </form>
           </div>
