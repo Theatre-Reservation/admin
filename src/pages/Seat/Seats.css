@@ -1,41 +1,114 @@
-.seats-page {
-    padding: 1.5rem;
+.App {
+    text-align: center;
+    padding: 20px;
 }
 
-.seats-page h1 {
-    margin-bottom: 1rem;
-    font-size: 2rem;
+.layout-selector {
+    margin: 20px 0;
 }
 
-.seats-grid {
+.row-form {
+    margin: 20px 0;
+}
+
+.row-form input {
+    padding: 10px;
+    margin: 0 10px;
+    font-size: 16px;
+}
+
+.row-form button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+.seat-layout {
+    margin: 20px 0;
+}
+
+.row {
+    margin-bottom: 10px;
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 10px;
-}
-
-.seat-row {
-    display: flex;
-    gap: 5px;
 }
 
 .seat {
     width: 40px;
     height: 40px;
-    background-color: #f0f0f0;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    text-align: center;
-    line-height: 40px;
+    border-radius: 5px;
+    margin: 0 5px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    font-size: 16px;
+    color: white;
+    display: inline-block;
 }
 
-.seat.selected {
-    background-color: #4CAF50;
+.available {
+    background-color: green;
+}
+
+.vip {
+    background-color: gold;
+}
+
+.unavailable {
+    background-color: gray;
+}
+
+.remove-row-btn {
+    margin-left: 20px;
+    padding: 5px 10px;
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Base styles for seats */
+.seat {
+    width: 40px;
+    height: 40px;
+    margin: 5px;
+    text-align: center;
+    line-height: 30px;
+    border-radius: 10px;
+    font-size: 14px;
+    border: 2px solid black;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Status 0: hidden (white) */
+.seat.hidden {
+    background-color: transparent;
+    color: black;
+}
+
+/* Status 1: empty (white) */
+.seat.empty {
+    background-color: rgb(19, 131, 45);
+    color: black;
+}
+
+/* Status 2: reserved (green) */
+.seat.reserved {
+    background-color: rgb(4, 0, 128);
     color: white;
 }
 
+/* Status 3: paid (red) */
+.seat.paid {
+    background-color: red;
+    color: white;
+}
+
+/* Hover effects for better UI */
 .seat:hover {
-    background-color: #ccc;
+    border: 2px solid #333;
 }
