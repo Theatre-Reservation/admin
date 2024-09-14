@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./Seats.css";
+import { BsTrash } from "react-icons/bs";
 
 // const predefinedLayouts = {
 //   Classic: [
@@ -318,6 +319,13 @@ const SeatsPage = () => {
 
       return (
         <div key={rowIndex} className="row">
+          <button
+            onClick={() => handleRemoveRow(rowIndex)}
+            className="remove-row"
+          >
+            {/* <BsTrash /> */}
+            Delete
+          </button>
           {row.map(
             (seat, seatIndex) => (
               console.log("seat", seat),
@@ -334,12 +342,6 @@ const SeatsPage = () => {
               )
             )
           )}
-          <button
-            onClick={() => handleRemoveRow(rowIndex)}
-            className="remove-row"
-          >
-            Remove Row
-          </button>
         </div>
       );
     });
@@ -359,12 +361,12 @@ const SeatsPage = () => {
       </div>
 
       <div className="row-form">
-        <button onClick={handleAddRow}>Add Row</button>
         <button onClick={handleAddColumn}>Add Column</button>
         <button onClick={handleRemoveColumn}>Remove Column</button>
         {error && <p style={{ color: "red" }}>{error}</p>}
       </div>
       <div className="seat-layout">{renderSeatLayout()}</div>
+      <button onClick={handleAddRow}>Add Row</button>
     </div>
   );
 };
