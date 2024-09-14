@@ -109,7 +109,6 @@ function EventPage() {
   };
 
   const handleAddOrEditEvent = () => {
-    console.log("dgfhj");
     const url = editMode ? `events/${editingEventId}` : "events";
     const method = editMode ? "put" : "post";
 
@@ -176,6 +175,7 @@ function EventPage() {
       .catch((error) => console.error("Error deleting event:", error));
   };
 
+
   return (
     <div className="events-page">
       <div className="events-title-bar">
@@ -192,6 +192,7 @@ function EventPage() {
             <th>Venue</th>
             <th>Date</th>
             <th>Runtime</th>
+            <th>Time</th>
             <th>Price</th>
             <th>Actions</th>
           </tr>
@@ -201,8 +202,9 @@ function EventPage() {
             <tr key={event._id}>
               <td>{event.title}</td>
               <td>{event.venue}</td>
-              <td>{event.date}</td>
+              <td>{event.date.split("T")[0]}</td>
               <td>{event.runtime}</td>
+              <td>{event.time}</td>
               <td>{event.ticket_price}</td>
               <td className="edit-delete-btns">
                 <button
@@ -254,6 +256,15 @@ function EventPage() {
                     />
                   </label>
                   <label>
+                    <input
+                      type="text"
+                      name="venue"
+                      value={newEvent.venue}
+                      onChange={handleInputChange}
+                      placeholder="Venue"
+                    />
+                  </label>
+                  <label>
                     <textarea
                       name="description"
                       value={newEvent.description}
@@ -272,17 +283,7 @@ function EventPage() {
                         placeholder="Image URL"
                       />
                     </label>
-                    {/* <button onClick={handleUpload}>Upload Image</button> */}
                   </div>
-                  <label>
-                    <input
-                      type="text"
-                      name="venue"
-                      value={newEvent.venue}
-                      onChange={handleInputChange}
-                      placeholder="Venue"
-                    />
-                  </label>
                 </div>
                 <div className="column">
                   <label>
@@ -290,7 +291,7 @@ function EventPage() {
                     <input
                       type="Date"
                       name="date"
-                      value={newEvent.duration}
+                      value={newEvent.date.split("T")[0]}
                       onChange={handleInputChange}
                       placeholder="Date"
                     />
@@ -309,14 +310,14 @@ function EventPage() {
                     <input
                       type="time"
                       name="time"
-                      value={newEvent.duration}
+                      value={newEvent.time}
                       onChange={handleInputChange}
                       placeholder="Time"
                     />
                   </label>
                   <label>
                     <input
-                      type="number"
+                      type="text"
                       name="price"
                       value={newEvent.price}
                       onChange={handleInputChange}

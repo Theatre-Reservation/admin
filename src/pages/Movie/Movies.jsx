@@ -50,71 +50,57 @@ function MoviePage() {
     }
   };
 
-  const handleAddMovie_ = () => {
-    let poster_path = "";
-    let cover_path = "";
+  const handleAddMovie_ = async (e) => {
+    e.preventDefault();
     setUploading(true);
+    let poster_path = "",
+      cover_path = "";
+    try {
+      if (imageFile.posterImage) {
+        const posterSnapshot = await uploadBytes(
+          ref(storage, `images/${imageFile.posterImage.name}`),
+          imageFile.posterImage
+        );
+        poster_path = await getDownloadURL(posterSnapshot.ref);
+        console.log("Poster path:", poster_path);
+      }
 
-    if (imageFile.coverImage && imageFile.posterImage) {
-      const storageRef = ref(storage, `images/${imageFile.posterImage.name}`);
-      uploadBytes(storageRef, imageFile.posterImage)
-        .then((snapshot) => {
-          getDownloadURL(snapshot.ref).then((url) => {
-            poster_path = url;
-            // setNewMovie({ ...newMovie, poster_path: url });
-            console.log("Poster Image File available at", url);
+      if (imageFile.coverImage) {
+        const coverSnapshot = await uploadBytes(
+          ref(storage, `images/${imageFile.coverImage.name}`),
+          imageFile.coverImage
+        );
+        cover_path = await getDownloadURL(coverSnapshot.ref);
+        console.log("Cover path:", cover_path);
+      }
 
-            // upload the cover image
-            const storageRef = ref(
-              storage,
-              `images/${imageFile.coverImage.name}`
-            );
+      const movieData = {
+        ...newMovie,
+        poster_path,
+        cover_path,
+        admin_id,
+      };
 
-            uploadBytes(storageRef, imageFile.coverImage) // Upload the file
-              .then((snapshot) => {
-                getDownloadURL(snapshot.ref).then((url) => {
-                  cover_path = url;
-                  setNewMovie({
-                    ...newMovie,
-                    poster_path: poster_path,
-                    cover_path: cover_path,
-                  });
-                  console.log("Cover Image File available at", url);
+      const url_ = editMode ? `movies/${movieId}` : "movies";
+      const method = editMode ? "put" : "post";
 
-                  const url_ = editMode ? `movies/${movieId}` : "movies";
-                  const method = editMode ? "put" : "post";
-                  console.log(newMovie);
+      const response = await axios({
+        method,
+        url: url_,
+        data: movieData,
+      });
 
-                  axios({
-                    method: method,
-                    url: url_,
-                    data: {
-                      newMovie,
-                      cover_path,
-                      poster_path,
-                      admin_id: admin_id,
-                    },
-                  })
-                    .then((response) => {
-                      console.log(
-                        `${editMode ? "Updated" : "Added"} movie successfully!`
-                      );
-                      console.log(response.data);
-                      setEditMode(false);
-                      setIsModalOpen(false); // Close modal after successful operation
-                      setUploading(false);
-                    })
-                    .catch((error) => {
-                      console.error("Error saving movie:", error);
-                      setUploading(false);
-                    });
-                });
-              });
-          });
-        })
-        .catch((error) => {
-          console.error("Error uploading file: ", error);
-        });
+      console.log(
+        `${editMode ? "Updated" : "Added"} movie successfully!`,
+        response.data
+      );
+      setIsModalOpen(false);
+      setEditMode(false);
+      resetForm();
+    } catch (error) {
+      console.error("Error saving movie:", error);
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -131,24 +117,6 @@ function MoviePage() {
       schedules: [...newMovie.schedules, { date: "", time: "", price: "" }],
     });
   };
-
-  // const handleAddMovie = () => {
-  //   const url = editMode ? `movies/${movieId}` : "movies";
-  //   const method = editMode ? "put" : "post";
-
-  //   axios({
-  //     method: method,
-  //     url: url,
-  //     data: newMovie,
-  //   })
-  //     .then((response) => {
-  //       console.log(`${editMode ? "Updated" : "Added"} movie successfully!`);
-  //       console.log(response.data);
-  //       setEditMode(false);
-  //       setIsModalOpen(false); // Close modal after successful operation
-  //     })
-  //     .catch((error) => console.error("Error saving movie:", error));
-  // };
 
   const handleEditMovie = (_id) => {
     axios
@@ -184,6 +152,28 @@ function MoviePage() {
       })
       .catch((error) => console.error("Error deleting Movie:", error));
   };
+
+  const resetForm = () => {
+    setNewMovie({
+      admin_id: "",
+      title: "",
+      language: "",
+      description: "",
+      main_genre: "",
+      sub_genres: [],
+      poster_path: "",
+      cover_path: "",
+      released_date: "",
+      runtime: "",
+      schedules: [{ date: "", time: "", price: "" }],
+    });
+    setImageFile({
+      posterImage: null,
+      coverImage: null,
+    });
+  };
+
+  const formattedDate = newMovie.released_date.split("T")[0]; // Extract the date part only
 
   return (
     <div className="movies-page">
@@ -316,43 +306,46 @@ function MoviePage() {
                     />
                   </label>
                   <label>
-                    Image URL
+                    Poster Image
+                    {/* Display the current poster image */}
+                    {newMovie.poster_path && (
+                      <div>
+                        <img
+                          src={newMovie.poster_path}
+                          alt="Poster"
+                          style={{ width: "50px", height: "70px" }}
+                        />
+                      </div>
+                    )}
+                    {/* Input field to upload a new poster */}
                     <input
                       type="file"
                       name="poster_path"
-                      // value={newMovie.poster_path}
                       onChange={(e) => handleFileChange(e, "posterImage")}
-                      placeholder="Image URL"
+                      accept="image/*" // Restrict to image files only
                     />
                   </label>
-                  {/* <label>
-                    <input
-                      type="text"
-                      name="poster_path"
-                      value={newMovie.poster_path}
-                      onChange={handleInputChange}
-                      placeholder="Image URL"
-                    />
-                  </label> */}
+
                   <label>
-                    Cover URL
+                    Cover Image
+                    {/* Display the current cover image */}
+                    {newMovie.cover_path && (
+                      <div>
+                        <img
+                          src={newMovie.cover_path}
+                          alt="Cover"
+                          style={{ width: "50px", height: "70px" }} // Adjust dimensions as needed
+                        />
+                      </div>
+                    )}
+                    {/* Input field to upload a new cover image */}
                     <input
                       type="file"
                       name="cover_path"
-                      // value={newMovie.cover_path}
                       onChange={(e) => handleFileChange(e, "coverImage")}
-                      placeholder="Cover URL"
+                      accept="image/*" // Restrict to image files only
                     />
                   </label>
-                  {/* <label>
-                    <input
-                      type="text"
-                      name="cover_path"
-                      value={newMovie.cover_path}
-                      onChange={handleInputChange}
-                      placeholder="Cover URL"
-                    />
-                  </label> */}
                 </div>
                 <div className="column">
                   <label>
@@ -360,19 +353,19 @@ function MoviePage() {
                     <input
                       type="date"
                       name="released_date"
-                      value={newMovie.released_date}
+                      value={formattedDate}
                       onChange={handleInputChange}
                       placeholder="Released Date"
                     />
                   </label>
                   <label>
-                    Run Time (minutes)
+                    Runtime
                     <input
-                      type="number"
+                      type="text"
                       name="runtime"
                       value={newMovie.runtime}
-                      onChange={handleInputChange}
-                      placeholder="Run Time"
+                      onChange={(e) => handleRuntimeChange(e)}
+                      placeholder="e.g., 2 hrs 10 mins"
                     />
                   </label>
 
@@ -420,8 +413,6 @@ function MoviePage() {
                 className="form-submit"
                 onClick={handleAddMovie_}
               >
-                {}
-
                 {uploading
                   ? "Uploading..."
                   : editMode
