@@ -17,13 +17,14 @@ function EventPage() {
     date: "",
     time: "",
     runtime: "",
-    price: "",
+    ticket_price: "",
   });
   const [editMode, setEditMode] = useState(false);
   const [editingEventId, setEditingEventId] = useState("");
   const admin_id = "64e1f26b2a91d130d5a14e3f";
 
   const [imageFile, setImageFile] = useState(null);
+  const [handleTime, setHandleTime] = useState(false);
 
   // Fetch all the events from the backend API
   useEffect(() => {
@@ -47,6 +48,7 @@ function EventPage() {
   /* Handle time input changes in the form */
   const handleTimeChange = (e) => {
     const timeValue = e.target.value; // "HH:mm" format
+    setHandleTime(true);
     setNewEvent((prevEvent) => ({
       ...prevEvent,
       time: timeValue,
@@ -72,10 +74,16 @@ function EventPage() {
   // Convert the time to AM/PM format or custom string when sending data
   const formatTimeForSend = (time) => {
     const [hours, minutes] = time.split(":");
-    const formattedTime = `${hours >= 12 ? hours - 12 : hours}:${parseInt(
-      minutes
-    )} ${hours >= 12 ? "PM" : "AM"}`;
-    return formattedTime;
+    if (handleTime) {
+      const formattedTime = `${hours >= 12 ? hours - 12 : hours}:${minutes} ${
+        hours >= 12 ? "PM" : "AM"
+      }`;
+      setHandleTime(false);
+      console.log("Formatted time:", formattedTime);
+      return formattedTime;
+    } else {
+      return time;
+    }
   };
 
   /* Handle image input changes in the form */
@@ -98,8 +106,10 @@ function EventPage() {
               poster_path: url,
             });
             console.log("File available at", url);
-            handleAddOrEditEvent();
+            console.log("New event data url:", newEvent);
           });
+          handleAddOrEditEvent();
+          setUploading(false);
         })
         .catch((error) => {
           console.error("Error uploading Image: ", error);
@@ -107,8 +117,8 @@ function EventPage() {
         });
     } else {
       handleAddOrEditEvent();
+      setUploading(false);
     }
-    setUploading(false);
   };
 
   const resetForm = () => {
@@ -121,7 +131,7 @@ function EventPage() {
       date: "",
       time: "",
       runtime: "",
-      price: "",
+      ticket_price: "",
     });
     setEditMode(false);
     setEditingEventId(null);
@@ -137,11 +147,12 @@ function EventPage() {
       data: {
         ...newEvent,
         time: formatTimeForSend(newEvent.time),
-        price: `LKR ${newEvent.price}`,
+        ticket_price: `LKR ${newEvent.ticket_price}`,
       },
     })
       .then((response) => {
         console.log(`${editMode ? "Updated" : "Added"} event successfully!`);
+        console.log("Response data:", response.data);
         setEditMode(false);
         setEventFormVisible(false); // Close form after successful operation
         if (editMode) {
@@ -150,6 +161,7 @@ function EventPage() {
               event._id === editingEventId ? response.data : event
             )
           );
+          console.log("Event details after:", newEvent);
         } else {
           setEvents((prevEvents) => [...prevEvents, response.data]);
         }
@@ -174,7 +186,7 @@ function EventPage() {
           date: event.date,
           time: event.time,
           runtime: event.runtime,
-          price: event.ticket_price,
+          ticket_price: event.ticket_price,
         });
         console.log("Event details after:", newEvent);
 
@@ -248,11 +260,13 @@ function EventPage() {
         <div className="modal">
           <div className="modal-content">
             <div className="modal-header">
-              <h2>{editMode ? "Edit Event" : "Add New Event"}</h2>
+              <h2>{editMode ? "Update Event" : "Add Event"}</h2>
               {/* Close icon */}
               <span
                 className="close-icon"
-                onClick={() => setEventFormVisible(false)}
+                onClick={() => {
+                  setEventFormVisible(false), resetForm();
+                }}
               >
                 &times;
               </span>
@@ -338,7 +352,7 @@ function EventPage() {
                     <input
                       type="text"
                       name="price"
-                      value={newEvent.price.replace(/[^\d]/g, "")}
+                      value={newEvent.ticket_price.replace(/[^\d]/g, "")}
                       onChange={handleInputChange}
                       placeholder="Price"
                     />
