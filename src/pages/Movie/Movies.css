@@ -85,7 +85,8 @@
 }
 
 .edit-btn,
-.delete-btn {
+.delete-btn 
+.view-btn {
     padding: 8px 12px;
     margin-right: 16px;
     border: none;

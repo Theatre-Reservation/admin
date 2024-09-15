@@ -3,6 +3,7 @@ import axios from "../../axios";
 import "./Movies.css";
 import { storage } from "../../firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import Preview from "../../components/Preview/Preview";
 
 function MoviePage() {
   const [uploading, setUploading] = useState(false);
@@ -252,6 +253,7 @@ function MoviePage() {
                 >
                   Delete
                 </button>
+                <Preview id={Movie._id} />
               </td>
             </tr>
           ))}
@@ -370,7 +372,7 @@ function MoviePage() {
                       type="text"
                       name="runtime"
                       value={newMovie.runtime}
-                      onChange={(e) => handleRuntimeChange(e)}
+                      onChange={handleInputChange}
                       placeholder="e.g., 2 hrs 10 mins"
                     />
                   </label>
