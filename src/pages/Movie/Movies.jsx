@@ -43,6 +43,22 @@ function MoviePage() {
     setNewMovie({ ...newMovie, [name]: value });
   };
 
+  // Convert 12-hour time ("hh:mm AM/PM") back to 24-hour time ("HH:mm")
+  const convertTo24HourFormat = (time12h) => {
+    const [time, modifier] = time12h.split(" ");
+    let [hours, minutes] = time.split(":");
+
+    if (hours === "12") {
+      hours = "00"; // Convert 12 AM to 00 hours (midnight)
+    }
+    if (modifier === "PM") {
+      hours = String(parseInt(hours, 10) + 12); // Convert PM hours to 24-hour format
+    }
+
+    const formattedTime = `${hours.padStart(2, "0")}:${minutes}`;
+    return formattedTime;
+  };
+
   const handleFileChange = (event, name) => {
     if (event.target.files[0]) {
       setImageFile({ ...imageFile, [name]: event.target.files[0] });
@@ -163,7 +179,6 @@ function MoviePage() {
       sub_genres: [],
       poster_path: "",
       cover_path: "",
-      released_date: "",
       runtime: "",
       schedules: [{ date: "", time: "", price: "" }],
     });
@@ -206,7 +221,7 @@ function MoviePage() {
               <td>
                 {Movie.schedules.map((schedule, index) => (
                   <div key={index}>
-                    <p>{schedule.date}</p>
+                    <p>{schedule.date.split("T")[0]}</p>
                   </div>
                 ))}
               </td>
@@ -278,16 +293,6 @@ function MoviePage() {
                     />
                   </label>
                   <label>
-                    <textarea
-                      name="description"
-                      value={newMovie.description}
-                      onChange={handleInputChange}
-                      placeholder="Description"
-                      className="description"
-                      rows={6}
-                    />
-                  </label>
-                  <label>
                     <input
                       type="text"
                       name="main_genre"
@@ -313,7 +318,7 @@ function MoviePage() {
                         <img
                           src={newMovie.poster_path}
                           alt="Poster"
-                          style={{ width: "50px", height: "70px" }}
+                          style={{ width: "30px", height: "50px" }}
                         />
                       </div>
                     )}
@@ -334,7 +339,7 @@ function MoviePage() {
                         <img
                           src={newMovie.cover_path}
                           alt="Cover"
-                          style={{ width: "50px", height: "70px" }} // Adjust dimensions as needed
+                          style={{ width: "30px", height: "50px" }} // Adjust dimensions as needed
                         />
                       </div>
                     )}
@@ -349,13 +354,14 @@ function MoviePage() {
                 </div>
                 <div className="column">
                   <label>
-                    Released Date
-                    <input
-                      type="date"
-                      name="released_date"
-                      value={formattedDate}
+                    Description
+                    <textarea
+                      name="description"
+                      value={newMovie.description}
                       onChange={handleInputChange}
-                      placeholder="Released Date"
+                      placeholder="Description"
+                      className="description"
+                      rows={6}
                     />
                   </label>
                   <label>
@@ -368,7 +374,6 @@ function MoviePage() {
                       placeholder="e.g., 2 hrs 10 mins"
                     />
                   </label>
-
                   <div className="scroll-schedules">
                     {newMovie.schedules.map((schedule, index) => (
                       <div key={index}>
@@ -377,7 +382,7 @@ function MoviePage() {
                           <input
                             type="date"
                             name="date"
-                            value={schedule.date}
+                            value={schedule.date.split("T")[0]}
                             onChange={(e) => handleScheduleChange(index, e)}
                           />
                         </label>
@@ -386,7 +391,7 @@ function MoviePage() {
                           <input
                             type="time"
                             name="time"
-                            value={schedule.time}
+                            value={convertTo24HourFormat(schedule.time)}
                             onChange={(e) => handleScheduleChange(index, e)}
                           />
                         </label>
@@ -395,7 +400,7 @@ function MoviePage() {
                           <input
                             type="number"
                             name="price"
-                            value={schedule.price}
+                            value={schedule.price.replace(/[^\d]/g, "")}
                             onChange={(e) => handleScheduleChange(index, e)}
                           />
                         </label>

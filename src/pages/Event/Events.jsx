@@ -25,6 +25,10 @@ function EventPage() {
 
   const [imageFile, setImageFile] = useState(null);
   const [handleTime, setHandleTime] = useState(false);
+  const [runtime, setRuntime] = useState({
+    runtimeHours: "",
+    runtimeMinutes: "",
+  });
 
   // Fetch all the events from the backend API
   useEffect(() => {
@@ -39,10 +43,30 @@ function EventPage() {
   /* Handle input changes in the form */
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setNewEvent({
-      ...newEvent,
-      [name]: value,
-    });
+    if (name === "runtimeHours" || name === "runtimeMinutes") {
+      console.log("djshjb");
+      setRuntime((prevState) => {
+        const updatedRuntime = {
+          ...prevState,
+          [name]: value,
+        };
+        console.log("dsfjhsd", updatedRuntime);
+        // After updating runtime, update the newEvent runtime
+        setNewEvent((prevEvent) => ({
+          ...prevEvent,
+          runtime: `${updatedRuntime.runtimeHours || 0} hrs ${
+            updatedRuntime.runtimeMinutes || 0
+          } mins`,
+        }));
+        console.log("New event data runtime:", newEvent);
+      });
+    } else {
+      setNewEvent({
+        ...newEvent,
+        [name]: value,
+      });
+    }
+    console.log("New event data:", newEvent);
   };
 
   /* Handle time input changes in the form */
@@ -178,7 +202,7 @@ function EventPage() {
         const event = response.data; // Assume event data is in response.data
         setEditingEventId(eventId);
         setNewEvent({
-          admin_id: admin_id,
+          admin_id: event.admin_id,
           title: event.title,
           description: event.description,
           poster_path: event.poster_path,
@@ -186,8 +210,20 @@ function EventPage() {
           date: event.date,
           time: event.time,
           runtime: event.runtime,
-          ticket_price: event.ticket_price,
+          ticket_price: event.ticket_price.replace(/[^\d]/g, ""),
         });
+
+        const [hours, mins] = event.runtime
+          .replace("hrs", ",")
+          .replace("mins", "")
+          .split(",")
+          .map(Number);
+        console.log("Hours:", hours, "Mins:", mins);
+        setRuntime({
+          runtimeHours: hours,
+          runtimeMinutes: mins,
+        });
+
         console.log("Event details after:", newEvent);
 
         setEditMode(true);
@@ -329,15 +365,25 @@ function EventPage() {
                       placeholder="Date"
                     />
                   </label>
-                  <label>
-                    <input
-                      type="text"
-                      name="runtime"
-                      value={newEvent.runtime}
-                      onChange={handleInputChange}
-                      placeholder="Runtime"
-                    />
-                  </label>
+                  <div className="runtime">
+                    <label>
+                      Runtime
+                      <input
+                        type="number"
+                        name="runtimeHours"
+                        value={runtime.runtimeHours}
+                        onChange={handleInputChange}
+                        placeholder="hrs"
+                      />
+                      <input
+                        type="number"
+                        name="runtimeMinutes"
+                        value={runtime.runtimeMinutes}
+                        onChange={handleInputChange}
+                        placeholder="mins"
+                      />
+                    </label>
+                  </div>
                   <label>
                     Time
                     <input
@@ -350,9 +396,9 @@ function EventPage() {
                   <label>
                     Price
                     <input
-                      type="text"
-                      name="price"
-                      value={newEvent.ticket_price.replace(/[^\d]/g, "")}
+                      type="number"
+                      name="ticket_price"
+                      value={newEvent.ticket_price}
                       onChange={handleInputChange}
                       placeholder="Price"
                     />
