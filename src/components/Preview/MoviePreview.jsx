@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import axios from "../../axios";
 import "./Preview.css";
 
-function Preview(props) {
+function MoviePreview(props) {
   const [movie, setMovie] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     axios.get(`/movies/${props.id}`).then((res) => setMovie(res.data));
-  }, [props.id]);
+  }, [props.id, isModalOpen]);
 
   if (!movie) {
     return <div>Loading...</div>;
@@ -32,10 +32,12 @@ function Preview(props) {
       {isModalOpen && (
         <div className="modal">
           <div className="modal-content">
-            <span className="close-icon" onClick={closeModal}>
-              &times;
-            </span>
-
+            <div className="modal-header">
+              <h1>{movie.title}</h1>
+              <span className="close-icon" onClick={closeModal}>
+                &times;
+              </span>
+            </div>
             {/* Movie Details Inside Modal */}
             <div
               className="movie-cover"
@@ -49,7 +51,6 @@ function Preview(props) {
                     className="movie-poster"
                   />
                   <div className="movie-details">
-                    <h1>{movie.title}</h1>
                     <div className="movie-meta">
                       <span className="movie-language">{movie.language}</span>
                       <span className="movie-genres">
@@ -76,4 +77,4 @@ function Preview(props) {
   );
 }
 
-export default Preview;
+export default MoviePreview;

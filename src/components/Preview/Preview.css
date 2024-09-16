@@ -33,11 +33,18 @@
 
 /* Modal Content */
 .modal-content {
-    background: #fff;
-    padding: 20px;
+    background: #ffffffb0;
+    padding: 5px 20px 10px 20px; 
     border-radius: 8px;
     width: 700px;
     position: relative;
+}
+
+.modal-content h1 {
+    margin-left: 15px;
+    margin-bottom: 20px;
+    color: #000;
+    font-style: oblique;
 }
 
 .modal-header {
@@ -49,7 +56,9 @@
 /* Close Button */
 .close-icon {
     cursor: pointer;
+    margin-right: 5px;
     font-size: 24px;
+    align-items: end;
     font-weight: bold;
     color: #333;
 }
@@ -67,8 +76,9 @@
 .movie-cover {
     background-size: cover;
     background-position: center;
-    height: 400px;
+    height: 350px;
     position: relative;
+    border-radius: 10px;
 }
 
 .movie-header {
@@ -77,11 +87,16 @@
 }
 
 .movie-poster {
-    width: 150px;
+    width: 125px;
     margin-right: 20px;
+    border-radius: 7.5%;
 }
 
 .movie-details {
-    color: rgb(255, 255, 255);
+    color: rgb(14, 9, 9);
 }
 
+.movie-synopsis {
+    margin-top: 20px;
+    color: rgb(7, 17, 26);
+}

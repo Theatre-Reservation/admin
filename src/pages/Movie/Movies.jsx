@@ -3,7 +3,7 @@ import axios from "../../axios";
 import "./Movies.css";
 import { storage } from "../../firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import Preview from "../../components/Preview/Preview";
+import MoviePreview from "../../components/Preview/MoviePreview";
 
 function MoviePage() {
   const [uploading, setUploading] = useState(false);
@@ -31,8 +31,8 @@ function MoviePage() {
     coverImage: null,
   });
 
+  // Fetch Movies from the backend API
   useEffect(() => {
-    // Fetch Movies from the backend API
     axios
       .get("Movies")
       .then((response) => setMovies(response.data))
@@ -70,8 +70,8 @@ function MoviePage() {
   const handleAddMovie_ = async (e) => {
     e.preventDefault();
     setUploading(true);
-    let poster_path = "",
-      cover_path = "";
+    let poster_path = newMovie.poster_path,
+      cover_path = newMovie.cover_path;
     try {
       if (imageFile.posterImage) {
         const posterSnapshot = await uploadBytes(
@@ -189,8 +189,6 @@ function MoviePage() {
     });
   };
 
-  const formattedDate = newMovie.released_date.split("T")[0]; // Extract the date part only
-
   return (
     <div className="movies-page">
       <div className="movie-title-bar">
@@ -253,7 +251,7 @@ function MoviePage() {
                 >
                   Delete
                 </button>
-                <Preview id={Movie._id} />
+                <MoviePreview id={Movie._id} />
               </td>
             </tr>
           ))}
@@ -364,6 +362,15 @@ function MoviePage() {
                       placeholder="Description"
                       className="description"
                       rows={6}
+                    />
+                  </label>
+                  <label>
+                    Released Date
+                    <input
+                      type="date"
+                      name="released_date"
+                      value={newMovie.released_date.split("T")[0]}
+                      onChange={handleInputChange}
                     />
                   </label>
                   <label>
