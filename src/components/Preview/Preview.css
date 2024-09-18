@@ -33,7 +33,7 @@
 
 /* Modal Content */
 .modal-content {
-    background: #ffffffb0;
+    background: #fdfbfb;
     padding: 5px 20px 10px 20px; 
     border-radius: 8px;
     width: 700px;
@@ -99,4 +99,32 @@
 .movie-synopsis {
     margin-top: 20px;
     color: rgb(7, 17, 26);
+    font-family:'Times New Roman', Times, serif;
+    font-style: italic;
+}
+
+.movie-meta {
+    margin: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+/* .movie-meta span {
+    display: block;
+} */
+
+.movie-stars {
+    display: flex;
+    margin-top: 10px;
+    color: #e50d0d;
+}
+
+.movie-synopsis h3 {
+    margin: 5px;
+}
+
+.movie-synopsis p {
+    margin-top: 0px;
 }

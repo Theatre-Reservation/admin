@@ -103,12 +103,6 @@
     color: white;
 }
 
-/* Status 3: paid (red) */
-.seat.paid {
-    background-color: red;
-    color: white;
-}
-
 /* Hover effects for better UI */
 .seat:hover {
     border: 2px solid #333;

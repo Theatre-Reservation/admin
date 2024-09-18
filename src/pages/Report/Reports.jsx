@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { saveAs } from "file-saver";
 import "./Reports.css";
 import { getDummyReportData } from "./data"; // Import the dummy data function
 
@@ -18,10 +17,21 @@ function ReportsPage() {
   // Function to download the report
   const downloadReport = () => {
     if (reportData) {
-      const blob = new Blob([reportData.data], {
-        type: "text/plain;charset=utf-8",
+      import("jspdf").then((jsPDF) => {
+        const doc = new jsPDF.default();
+
+        // Set the title of the report at the top
+        doc.setFontSize(16);
+        doc.text(reportData.title, 10, 10);
+
+        // Add report content below the title
+        doc.setFontSize(12);
+        const reportContent = doc.splitTextToSize(reportData.data, 180); // Wrap long text
+        doc.text(reportContent, 10, 20);
+
+        // Save the generated PDF with the title as the filename
+        doc.save(`${reportData.title}.pdf`);
       });
-      saveAs(blob, `${reportData.title}.txt`);
     }
   };
 

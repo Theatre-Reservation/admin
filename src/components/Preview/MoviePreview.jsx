@@ -50,24 +50,33 @@ function MoviePreview(props) {
                     alt={movie.title}
                     className="movie-poster"
                   />
-                  <div className="movie-details">
-                    <div className="movie-meta">
-                      <span className="movie-language">{movie.language}</span>
-                      <span className="movie-genres">
-                        {movie.main_genre} | {movie.sub_genres.join(" | ")}
-                      </span>
-                      <span className="movie-release-date">
-                        {new Date(movie.released_date).toLocaleDateString()}
-                      </span>
-                      <span className="movie-runtime">{movie.runtime}</span>
-                    </div>
-                  </div>
                 </div>
+                <div className="movie-rating">{movie.rating}</div>
               </div>
             </div>
+            <div className="movie-details">
+              <div className="movie-meta">
+                <span className="movie-language">{movie.language}</span>
 
+                <span className="movie-genres">
+                  {movie.main_genre} | {movie.sub_genres.join(" | ")}
+                </span>
+                <span className="movie-release-date">
+                  {new Date(movie.released_date).toLocaleDateString()}
+                </span>
+                <span className="movie-runtime">{movie.runtime}</span>
+              </div>
+              {/* Stars */}
+              <div className="movie-stars">
+                {Array.from({ length: 4 }, (_, index) => (
+                  <span key={index} className="star-icon">
+                    &#9733;
+                  </span>
+                ))}
+              </div>
+            </div>
             <div className="movie-synopsis">
-              <h2>Summary</h2>
+              <h3>Summary</h3>
               <p>{movie.description}</p>
             </div>
           </div>

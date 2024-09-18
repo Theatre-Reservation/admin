@@ -1,89 +1,119 @@
 .reports-page {
-    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding: 20px;
+    background-color: #0f1624;
+    font-family: 'Roboto', sans-serif;
 }
 
 .reports-page h1 {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-    color: #fff
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    color: #ffffff;
+    text-align: center;
+    letter-spacing: 0.05em;
 }
 
 .filters {
     display: flex;
+    justify-content: center;
+    align-items: center;
     gap: 20px;
     margin-bottom: 20px;
+    flex-wrap: wrap;
+    /* Responsive handling for smaller screens */
 }
 
 .filter {
     display: flex;
     flex-direction: column;
+    align-self: center;
+    justify-content: center;
+    width: 240px;
+    max-width: 250px;
 }
 
 .filter label {
-    margin-bottom: 5px;
-    font-weight: bold;
+    margin-bottom: 8px;
+    margin-left: 10px;
+    font-weight: 600;
+    width: 100%;
+    color: #d1d5db;
+    font-size: 1rem;
 }
 
 .filter select {
-    padding: 5px;
+    padding: 8px 12px;
+    border: 1px solid #34495e;
+    border-radius: 6px;
+    background-color: #1e2a38;
+    color: #ffffff;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.filter select:focus {
+    border-color: #34dba3;
+    /* Highlighted border on focus */
+    outline: none;
 }
 
 .generate-btn,
 .download-btn {
-    margin-top: 20px;
-    padding: 10px 15px;
-    background-color: #4CAF50;
+    max-width: 200px;
+    align-items: center;
+    margin: 20px auto; /* Center the button horizontally */
+    padding: 12px 18px;
+    background-color: #0f8835;
     color: white;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background-color 0.3s, transform 0.2s;
 }
 
 .generate-btn:hover,
 .download-btn:hover {
-    background-color: #45a049;
+    background-color: #12993d;
+    transform: translateY(-2px);
+    /* Subtle lift on hover */
 }
-/* 
+
 .report-result {
     margin-top: 30px;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background-color: #f9f9f9;
+    padding: 25px;
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+}
+
+.report-result:hover {
+    transform: translateY(-5px);
+    /* Lift effect on hover */
 }
 
 .report-result h2 {
-    margin-bottom: 10px;
-}
-
-.report-result p {
-    white-space: pre-wrap;
-} */
-
-.report-result {
-    margin-top: 20px;
-    padding: 20px;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
-}
-
-.report-result h2 {
-    font-size: 18px;
-    color: #007bff;
-    margin-bottom: 15px;
+    font-size: 1.25rem;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
 }
 
 .report-result pre {
-    font-size: 16px;
-    line-height: 1.6;
-    background-color: #f4f4f4;
-    padding: 10px;
-    border-radius: 4px;
+    font-size: 1rem;
+    line-height: 1.75;
+    background-color: #f0f0f0;
+    padding: 15px;
+    border-radius: 8px;
     overflow-x: auto;
+    color: #2d2d2d;
     white-space: pre-wrap;
     word-wrap: break-word;
-    color: black;
 }
