@@ -20,7 +20,7 @@ function MoviePage() {
     cover_path: "",
     released_date: "",
     runtime: "",
-    schedules: [{ date: "", time: "", price: "" }],
+    schedules: [{ date: "", time: "", price: "", seats: [[]] }],
   });
   const [movieId, setMovieId] = useState("");
   const [editMode, setEditMode] = useState(false);
@@ -45,20 +45,20 @@ function MoviePage() {
   };
 
   // Convert 12-hour time ("hh:mm AM/PM") back to 24-hour time ("HH:mm")
-  const convertTo24HourFormat = (time12h) => {
-    const [time, modifier] = time12h.split(" ");
-    let [hours, minutes] = time.split(":");
+  // const convertTo24HourFormat = (time12h) => {
+  //   const [time, modifier] = time12h.split(" ");
+  //   let [hours, minutes] = time.split(":");
 
-    if (hours === "12") {
-      hours = "00"; // Convert 12 AM to 00 hours (midnight)
-    }
-    if (modifier === "PM") {
-      hours = String(parseInt(hours, 10) + 12); // Convert PM hours to 24-hour format
-    }
+  //   if (hours === "12") {
+  //     hours = "00"; // Convert 12 AM to 00 hours (midnight)
+  //   }
+  //   if (modifier === "PM") {
+  //     hours = String(parseInt(hours, 10) + 12); // Convert PM hours to 24-hour format
+  //   }
 
-    const formattedTime = `${hours.padStart(2, "0")}:${minutes}`;
-    return formattedTime;
-  };
+  //   const formattedTime = `${hours.padStart(2, "0")}:${minutes}`;
+  //   return formattedTime;
+  // };
 
   const handleFileChange = (event, name) => {
     if (event.target.files[0]) {
@@ -121,19 +121,19 @@ function MoviePage() {
     }
   };
 
-  const handleScheduleChange = (index, e) => {
-    const { name, value } = e.target;
-    const newSchedules = [...newMovie.schedules];
-    newSchedules[index] = { ...newSchedules[index], [name]: value };
-    setNewMovie({ ...newMovie, schedules: newSchedules });
-  };
+  // const handleScheduleChange = (index, e) => {
+  //   const { name, value } = e.target;
+  //   const newSchedules = [...newMovie.schedules];
+  //   newSchedules[index] = { ...newSchedules[index], [name]: value };
+  //   setNewMovie({ ...newMovie, schedules: newSchedules });
+  // };
 
-  const handleAddSchedule = () => {
-    setNewMovie({
-      ...newMovie,
-      schedules: [...newMovie.schedules, { date: "", time: "", price: "" }],
-    });
-  };
+  // const handleAddSchedule = () => {
+  //   setNewMovie({
+  //     ...newMovie,
+  //     schedules: [...newMovie.schedules, { date: "", time: "", price: "" }],
+  //   });
+  // };
 
   const handleEditMovie = (_id) => {
     axios
@@ -180,6 +180,7 @@ function MoviePage() {
       sub_genres: [],
       poster_path: "",
       cover_path: "",
+      released_date: "",
       runtime: "",
       schedules: [{ date: "", time: "", price: "" }],
     });
@@ -204,9 +205,9 @@ function MoviePage() {
             <th>Language</th>
             <th>Genre</th>
             <th>Run Time</th>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Price</th>
+            <th>Released Date</th>
+            {/* <th>Time</th>
+            <th>Price</th> */}
             <th>Actions</th>
           </tr>
         </thead>
@@ -217,7 +218,8 @@ function MoviePage() {
               <td>{Movie.language}</td>
               <td>{Movie.main_genre}</td>
               <td>{Movie.runtime}</td>
-              <td>
+              <td>{Movie.released_date.split("T")[0]}</td>
+              {/* <td>
                 {Movie.schedules.map((schedule, index) => (
                   <div key={index}>
                     <p>{schedule.date.split("T")[0]}</p>
@@ -237,7 +239,7 @@ function MoviePage() {
                     <p>{schedule.price}</p>
                   </div>
                 ))}
-              </td>
+              </td> */}
               <td>
                 <button
                   className="edit-btn"
@@ -383,7 +385,7 @@ function MoviePage() {
                       placeholder="e.g., 2 hrs 10 mins"
                     />
                   </label>
-                  <div className="scroll-schedules">
+                  {/* <div className="scroll-schedules">
                     {newMovie.schedules.map((schedule, index) => (
                       <div key={index}>
                         <label>
@@ -415,10 +417,10 @@ function MoviePage() {
                         </label>
                       </div>
                     ))}
-                  </div>
-                  <button type="button" onClick={handleAddSchedule}>
+                  </div> */}
+                  {/* <button type="button" onClick={handleAddSchedule}>
                     Add Another Schedule
-                  </button>
+                  </button> */}
                 </div>
               </div>
 

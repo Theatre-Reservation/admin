@@ -3,6 +3,7 @@ import axios from "../../axios";
 import "./Events.css";
 import { storage } from "../../firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import EventPreview from "../../components/Preview/EventPreview";
 
 function EventPage() {
   const [uploading, setUploading] = useState(false);
@@ -171,7 +172,6 @@ function EventPage() {
       data: {
         ...newEvent,
         time: formatTimeForSend(newEvent.time),
-        ticket_price: `LKR ${newEvent.ticket_price}`,
       },
     })
       .then((response) => {
@@ -210,7 +210,7 @@ function EventPage() {
           date: event.date,
           time: event.time,
           runtime: event.runtime,
-          ticket_price: event.ticket_price.replace(/[^\d]/g, ""),
+          ticket_price: event.ticket_price,
         });
 
         const [hours, mins] = event.runtime
@@ -272,7 +272,7 @@ function EventPage() {
               <td>{event.date.split("T")[0]}</td>
               <td>{event.runtime}</td>
               <td>{event.time}</td>
-              <td>{event.ticket_price}</td>
+              <td>{"LKR " + event.ticket_price}</td>
               <td className="edit-delete-btns">
                 <button
                   className="edit-btn"
@@ -286,6 +286,7 @@ function EventPage() {
                 >
                   Delete
                 </button>
+                <EventPreview id={event._id} />
               </td>
             </tr>
           ))}

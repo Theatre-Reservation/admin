@@ -66,14 +66,6 @@ function MoviePreview(props) {
                 </span>
                 <span className="movie-runtime">{movie.runtime}</span>
               </div>
-              {/* Stars */}
-              <div className="movie-stars">
-                {Array.from({ length: 4 }, (_, index) => (
-                  <span key={index} className="star-icon">
-                    &#9733;
-                  </span>
-                ))}
-              </div>
             </div>
             <div className="movie-synopsis">
               <h3>Summary</h3>

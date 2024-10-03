@@ -1,28 +1,30 @@
 import React, { useState } from "react";
+import axios from "../../axios";
 import "./Seats.css";
 
 // Define initial layouts for different seating arrangements
 const predefinedLayouts = {
   Box: [
-    [1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
   ],
   Round: [
-    [0, 0, 1, 1, 1, 0, 0],
-    [0, 1, 1, 1, 1, 1, 0],
-    [1, 1, 1, 1, 1, 1, 1],
-    [0, 1, 1, 1, 1, 1, 0],
-    [0, 0, 1, 1, 1, 0, 0],
+    [0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0],
+    [0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0],
+    [0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0],
+    [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
+    [0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0],
+    [0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0],
   ],
   Beem: [
-    [0, 0, 0, 1, 0, 0, 0],
-    [0, 0, 1, 1, 1, 0, 0],
-    [0, 1, 1, 1, 1, 1, 0],
-    [1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1],
+    [0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0],
+    [0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0],
+    [0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0],
+    [0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0],
+    [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
   ],
 };
 
@@ -34,9 +36,25 @@ const SEAT_STATUSES = {
 };
 
 const SeatsPage = () => {
+  // const { id } = useParams();
+
   const [layout, setLayout] = useState("Box"); // Selected layout type
   const [seatLayout, setSeatLayout] = useState(predefinedLayouts[layout]);
   const [error, setError] = useState(null);
+
+  const handleSaveLayout = async (id) => {
+    id = "66e71e5ed8b8a2a660fae78b";
+    try {
+      const response = await axios.patch(`movies/${id}/seats`, {
+        seats: seatLayout,
+      });
+      console.log("Layout saved successfully:", response.data);
+      setError(null);
+    } catch (error) {
+      console.error("Error saving layout:", error);
+      setError("Failed to save layout. Please try again.");
+    }
+  };
 
   // Handle layout change
   const handleLayoutChange = (e) => {
@@ -58,7 +76,7 @@ const SeatsPage = () => {
   const handleAddRow = () => {
     if (seatLayout.length === 0) return;
     // Create a new row with the same number of seats as the current layout's rows
-    const newRow = Array.from({ length: seatLayout[0].length }, () => 1); 
+    const newRow = Array.from({ length: seatLayout[0].length }, () => 1);
     // Append the new row to the current layout
     setSeatLayout([...seatLayout, newRow]);
   };
@@ -104,21 +122,17 @@ const SeatsPage = () => {
           >
             Delete
           </button>
-          {row.map(
-            (seat, seatIndex) => (
-              console.log("seat", seat),
-              console.log("seatIndex", seatIndex),
-              (
-                <button
-                  key={seatIndex}
-                  className={`seat ${SEAT_STATUSES[seat]}`}
-                  onClick={() => changeSeatStatus(rowIndex, seatIndex)}
-                >
-                  {seat > 0 ? `${rowLabel}${seatCounter++}` : ""}
-                </button>
-              )
-            )
-          )}
+          {row.map((seat, seatIndex) => (
+            // console.log("seat", seat),
+            // console.log("seatIndex", seatIndex),
+            <button
+              key={seatIndex}
+              className={`seat ${SEAT_STATUSES[seat]}`}
+              onClick={() => changeSeatStatus(rowIndex, seatIndex)}
+            >
+              {seat > 0 ? `${rowLabel}${seatCounter++}` : ""}
+            </button>
+          ))}
         </div>
       );
     });
@@ -127,7 +141,6 @@ const SeatsPage = () => {
   return (
     <div className="App">
       <h1>Theatre Seat Management</h1>
-
       <div className="layout-selector">
         <label>Select Layout: </label>
         <select value={layout} onChange={handleLayoutChange}>
@@ -137,13 +150,26 @@ const SeatsPage = () => {
         </select>
       </div>
 
-      <div className="row-form">
-        <button onClick={handleAddColumn}>Add Column</button>
-        <button onClick={handleRemoveColumn}>Remove Column</button>
-        {error && <p style={{ color: "red" }}>{error}</p>}
+      <div className="seat-layer">
+        <div className="row-form">
+          <button className="add-column" onClick={handleAddColumn}>
+            Add Column
+          </button>
+          <button className="remove-column" onClick={handleRemoveColumn}>
+            Remove Column
+          </button>
+          {error && <p style={{ color: "red" }}>{error}</p>}
+        </div>
+        <div className="seat-layout">
+          {renderSeatLayout()}
+          <button className="add-row" onClick={handleAddRow}>
+            Add Row
+          </button>
+        </div>
       </div>
-      <div className="seat-layout">{renderSeatLayout()}</div>
-      <button onClick={handleAddRow}>Add Row</button>
+      <button className="save" onClick={handleSaveLayout}>
+        Save
+      </button>
     </div>
   );
 };

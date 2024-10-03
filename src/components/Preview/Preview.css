@@ -19,7 +19,6 @@
 
 /* The Modal (background) */
 .modal {
-    /* position: fixed; */
     top: 0;
     left: 0;
     width: 100%;
@@ -115,16 +114,46 @@
     display: block;
 } */
 
-.movie-stars {
-    display: flex;
-    margin-top: 10px;
-    color: #e50d0d;
-}
-
 .movie-synopsis h3 {
     margin: 5px;
 }
 
 .movie-synopsis p {
     margin-top: 0px;
+}
+
+.event-container {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    max-width: 120px;
+    padding: 20px;
+    background-color: #f8f8f8;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.event-poster {
+    flex: 1 1 300px;
+    margin-right: 20px;
+}
+
+.event-poster img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+}
+
+.event-details {
+    flex: 3 1 600px;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.event-title,
+.event-description,
+.event-info p {
+    margin: 10px 0;
 }
