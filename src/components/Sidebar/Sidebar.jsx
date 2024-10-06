@@ -36,11 +36,11 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                 <BsGrid1X2Fill className="icon" /> Dashboard
               </Link>
             </li>
-            <li className="sidebar-list-item">
+            {/* <li className="sidebar-list-item">
               <Link to="/seatpage">
               <BsFillGrid3X3GapFill className="icon" /> Seats
               </Link>
-              </li>
+              </li> */}
             <li className="sidebar-list-item">
               <Link to="/moviespage">
                 <BsPeopleFill className="icon" /> movies

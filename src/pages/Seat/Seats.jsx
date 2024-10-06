@@ -5,11 +5,13 @@ import "./Seats.css";
 // Define initial layouts for different seating arrangements
 const predefinedLayouts = {
   Box: [
-    [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
+
   ],
   Round: [
     [0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0],
@@ -159,7 +161,7 @@ const SeatsPage = () => {
           <button className="remove-column" onClick={handleRemoveColumn}>
             Remove Column
           </button>
-          {error && <p style={{ color: "red" }}>{error}</p>}
+          {error && <p style={{ color: "green" }}>{error}</p>}
         </div>
         <div className="seat-layout">
           {renderSeatLayout()}

@@ -31,7 +31,7 @@ function App() {
             openSidebarToggle ? "main-content expanded" : "main-content"
           }
         >
-          <Header OpenSidebar={OpenSidebar} />
+          {/* <Header OpenSidebar={OpenSidebar} /> */}
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/eventspage" element={<EventPage />} />
