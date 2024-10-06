@@ -37,9 +37,9 @@ function App() {
             <Route path="/eventspage" element={<EventPage />} />
             <Route path="/moviespage" element={<MoviePage />} />
             <Route path="/seatpage" element={<ShowsPage />} />
-            {/* <Route path="/moviespage/showpage" element={<ShowsPage />} /> */}
+            <Route path="/moviespage/showpage" element={<ShowsPage />} />
             <Route
-              path="/moviepage/showpage/seatpage/:id"
+              path="/moviespage/showpage/seatpage/:id"
               exact
               element={<SeatsPage />}
             />

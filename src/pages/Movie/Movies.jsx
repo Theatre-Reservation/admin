@@ -3,7 +3,9 @@ import axios from "../../axios";
 import "./Movies.css";
 import { storage } from "../../firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import ShowPage from "../Show/Show";
 import MoviePreview from "../../components/Preview/MoviePreview";
+import { useNavigate } from "react-router-dom";
 
 function MoviePage() {
   const [uploading, setUploading] = useState(false);
@@ -31,6 +33,8 @@ function MoviePage() {
     coverImage: null,
   });
 
+  const navigate = useNavigate();
+
   // Fetch Movies from the backend API
   useEffect(() => {
     axios
@@ -44,26 +48,9 @@ function MoviePage() {
     setNewMovie({ ...newMovie, [name]: value });
   };
 
-  // Convert 12-hour time ("hh:mm AM/PM") back to 24-hour time ("HH:mm")
-  // const convertTo24HourFormat = (time12h) => {
-  //   const [time, modifier] = time12h.split(" ");
-  //   let [hours, minutes] = time.split(":");
-
-  //   if (hours === "12") {
-  //     hours = "00"; // Convert 12 AM to 00 hours (midnight)
-  //   }
-  //   if (modifier === "PM") {
-  //     hours = String(parseInt(hours, 10) + 12); // Convert PM hours to 24-hour format
-  //   }
-
-  //   const formattedTime = `${hours.padStart(2, "0")}:${minutes}`;
-  //   return formattedTime;
-  // };
-
   const handleFileChange = (event, name) => {
     if (event.target.files[0]) {
       setImageFile({ ...imageFile, [name]: event.target.files[0] });
-      // handleUpload();
     }
   };
 
@@ -120,20 +107,6 @@ function MoviePage() {
       setUploading(false);
     }
   };
-
-  // const handleScheduleChange = (index, e) => {
-  //   const { name, value } = e.target;
-  //   const newSchedules = [...newMovie.schedules];
-  //   newSchedules[index] = { ...newSchedules[index], [name]: value };
-  //   setNewMovie({ ...newMovie, schedules: newSchedules });
-  // };
-
-  // const handleAddSchedule = () => {
-  //   setNewMovie({
-  //     ...newMovie,
-  //     schedules: [...newMovie.schedules, { date: "", time: "", price: "" }],
-  //   });
-  // };
 
   const handleEditMovie = (_id) => {
     axios
@@ -214,32 +187,20 @@ function MoviePage() {
         <tbody>
           {Movies.map((Movie) => (
             <tr key={Movie._id}>
-              <td>{Movie.title}</td>
+              <td
+                onClick={() =>
+                  navigate(
+                    `/moviespage/showpage`
+                    // `/moviepage/showpage/seatpage/${Movie._id}`
+                  )
+                }
+              >
+                {Movie.title}
+              </td>
               <td>{Movie.language}</td>
               <td>{Movie.main_genre}</td>
               <td>{Movie.runtime}</td>
               <td>{Movie.released_date.split("T")[0]}</td>
-              {/* <td>
-                {Movie.schedules.map((schedule, index) => (
-                  <div key={index}>
-                    <p>{schedule.date.split("T")[0]}</p>
-                  </div>
-                ))}
-              </td>
-              <td>
-                {Movie.schedules.map((schedule, index) => (
-                  <div key={index}>
-                    <p>{schedule.time}</p>
-                  </div>
-                ))}
-              </td>
-              <td>
-                {Movie.schedules.map((schedule, index) => (
-                  <div key={index}>
-                    <p>{schedule.price}</p>
-                  </div>
-                ))}
-              </td> */}
               <td>
                 <button
                   className="edit-btn"
@@ -268,7 +229,9 @@ function MoviePage() {
               {/* Close icon */}
               <span
                 className="close-icon"
-                onClick={() => setIsModalOpen(false)}
+                onClick={() => {
+                  setIsModalOpen(false), resetForm();
+                }}
               >
                 &times;
               </span>
@@ -329,7 +292,7 @@ function MoviePage() {
                       type="file"
                       name="poster_path"
                       onChange={(e) => handleFileChange(e, "posterImage")}
-                      accept="image/*" // Restrict to image files only
+                      accept="image/*"
                     />
                   </label>
 
@@ -341,7 +304,7 @@ function MoviePage() {
                         <img
                           src={newMovie.cover_path}
                           alt="Cover"
-                          style={{ width: "30px", height: "50px" }} // Adjust dimensions as needed
+                          style={{ width: "30px", height: "50px" }}
                         />
                       </div>
                     )}
@@ -363,7 +326,7 @@ function MoviePage() {
                       onChange={handleInputChange}
                       placeholder="Description"
                       className="description"
-                      rows={6}
+                      rows={12}
                     />
                   </label>
                   <label>
@@ -385,42 +348,6 @@ function MoviePage() {
                       placeholder="e.g., 2 hrs 10 mins"
                     />
                   </label>
-                  {/* <div className="scroll-schedules">
-                    {newMovie.schedules.map((schedule, index) => (
-                      <div key={index}>
-                        <label>
-                          Date
-                          <input
-                            type="date"
-                            name="date"
-                            value={schedule.date.split("T")[0]}
-                            onChange={(e) => handleScheduleChange(index, e)}
-                          />
-                        </label>
-                        <label>
-                          Time
-                          <input
-                            type="time"
-                            name="time"
-                            value={convertTo24HourFormat(schedule.time)}
-                            onChange={(e) => handleScheduleChange(index, e)}
-                          />
-                        </label>
-                        <label>
-                          Price
-                          <input
-                            type="number"
-                            name="price"
-                            value={schedule.price.replace(/[^\d]/g, "")}
-                            onChange={(e) => handleScheduleChange(index, e)}
-                          />
-                        </label>
-                      </div>
-                    ))}
-                  </div> */}
-                  {/* <button type="button" onClick={handleAddSchedule}>
-                    Add Another Schedule
-                  </button> */}
                 </div>
               </div>
 

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./Show.css";
 import axios from "../../axios";
-import SeatsPage from "../Seat/Seats";
 import { useNavigate } from "react-router-dom";
 
 function ShowsPage() {
@@ -28,6 +27,8 @@ function ShowsPage() {
       try {
         const response = await axios.get(`/shows/${movie}`);
         setShows(response.data);
+        console.log("Shows fetched:", response.data);
+        console.log("Shows:", shows);
       } catch (error) {
         console.error("Error fetching shows:", error);
       }
@@ -46,18 +47,18 @@ function ShowsPage() {
   };
 
   // Function to delete a show
-  const deleteShow = async (id) => {
+  const deleteShow = async (_id) => {
     try {
-      await axios.delete(`/shows/${id}`);
-      setShows(shows.filter((show) => show.id !== id));
+      await axios.delete(`/shows/${_id}`);
+      setShows(shows.filter((show) => show._id !== _id));
     } catch (error) {
       console.error("Error deleting the show:", error);
     }
   };
 
   // Function to handle editing a show
-  const handleEdit = (id) => {
-    const showToEdit = shows.find((show) => show.id === id);
+  const handleEdit = (_id) => {
+    const showToEdit = shows.find((show) => show._id === _id);
     setEditingShow(showToEdit);
     // setEditingMode(true);
     setNewShow({
@@ -85,10 +86,10 @@ function ShowsPage() {
   // Function to save edited show
   const saveShow = async () => {
     try {
-      await axios.put(`/shows/${editingShow.id}`, editingShow);
+      await axios.put(`/shows/${editingShow._id}`, editingShow);
       setShows((prevShows) =>
         prevShows.map((show) =>
-          show.id === editingShow.id ? editingShow : show
+          show._id === editingShow._id ? editingShow : show
         )
       );
       setIsModalOpen(false);
@@ -119,8 +120,9 @@ function ShowsPage() {
     }
   };
 
-  const showSeats = (id) => {
-    navigate(`/moviepage/showpage/seatpage/${id}`);
+  const showSeats = (_id) => {
+    navigate(`/moviespage/showpage/seatpage/${_id}`);
+    console.log("show seats", _id);
   };
 
   return (
@@ -134,7 +136,6 @@ function ShowsPage() {
       <table className="shows-table">
         <thead>
           <tr>
-            {/* <th onClick={() => sortBy("movieTitle")}>Movie Title</th> */}
             <th>Date</th>
             <th>Time</th>
             <th>Price</th>
@@ -144,24 +145,29 @@ function ShowsPage() {
         </thead>
         <tbody>
           {shows.map((show) => (
-            <tr key={show.id}>
+            <tr key={show._id}>
               <td>{show.date}</td>
               <td>{show.time}</td>
               <td>{show.price}</td>
               <td>
-                {/* <SeatsPage id={show.id} /> */}
-                <button onClick={() => showSeats(show.id)}>Show Seats</button>
+                {/* <SeatsPage _id={show._id} /> */}
+                <button
+                  className="show-seats-btn"
+                  onClick={() => showSeats(show._id)}
+                >
+                  Show Seats
+                </button>
               </td>
               <td className="edit-delete-btns">
                 <button
                   className="edit-btn"
-                  onClick={() => handleEdit(show.id)}
+                  onClick={() => handleEdit(show._id)}
                 >
                   Edit
                 </button>
                 <button
                   className="delete-btn"
-                  onClick={() => deleteShow(show.id)}
+                  onClick={() => deleteShow(show._id)}
                 >
                   Delete
                 </button>

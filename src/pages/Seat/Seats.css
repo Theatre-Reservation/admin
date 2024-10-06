@@ -35,18 +35,17 @@ h1 {
 }
 
 .row-form button {
-    padding: 10px 10px;
+    padding: 8px 8px;
     margin: 0 10px;
-    font-size: 16px;
+    font-size: 12px;
     cursor: pointer;
-    /* background-color: #4CAF50; */
     color: white;
     border: none;
     border-radius: 5px;
 }
 
 .row-form .add-column {
-    background-color: #4CAF50;
+    background-color: #4cafa5;
 }
 
 .row-form .remove-column {
@@ -54,7 +53,7 @@ h1 {
 }
 
 .row-form .add-column:hover {
-    background-color: #37893b;
+    background-color: #377489;
 }
 
 .row-form .remove-column:hover {
@@ -146,10 +145,10 @@ h1 {
 }
 
 .add-row {
-    padding: 10px 10px;
+    padding: 7px 7px;
     margin-left: 90px;
     width: 350px;
-    background-color: #4CAF50;
+    background-color: #4cafa5;
     color: white;
     border: none;
     border-radius: 5px;
@@ -157,5 +156,21 @@ h1 {
 }
 
 .add-row:hover {
-    background-color: #37893b;
+    background-color: #377489;
+}
+
+.save {
+    padding: 10px 10px;
+    margin-top: 20px;
+    margin-left: 90px;
+    width: 150px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.save:hover {
+    background-color: #179c41;
 }

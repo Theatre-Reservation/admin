@@ -33,7 +33,7 @@
 .shows-table td {
     border: 1px solid #ffffff44;
     padding: 10px;
-    text-align: left;
+    text-align: center;
 }
 
 .shows-table th {
@@ -41,6 +41,22 @@
     background-color: #0d121cc8;
     color: white;
     font-weight: 400;
+}
+
+.show-seats-btn {
+    /* padding: 10px 15px; */
+    background-color: #4CAF50;
+        color: white;
+    padding: 7px 10px;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+    transition: background-color 0.3s;
+    width: 150px;
+}
+
+.show-seats-btn:hover {
+    background-color: #179c41;
 }
 
 /* .edit-delete-btns {

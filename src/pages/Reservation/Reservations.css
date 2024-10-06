@@ -31,7 +31,6 @@
         background-color: #179c41;
 }
 
-
 .reservations-table {
     width: 100%;
     border-collapse: collapse;
@@ -46,9 +45,11 @@
 }
 
 .reservations-table th {
+    cursor: pointer;
     background-color: #0d121cc8;
     color: white;
-    font-weight: 400;}
+    font-weight: 400;
+}
 
 .reservations-table tbody tr:hover {
     background-color: #212d409c;

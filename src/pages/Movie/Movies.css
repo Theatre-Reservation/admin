@@ -81,6 +81,7 @@
 }
 
 .movies-table tbody tr:hover {
+    cursor: pointer;
     background-color: #212d409c;
 }
 
