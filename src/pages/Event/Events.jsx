@@ -44,6 +44,7 @@ function EventPage() {
   /* Handle input changes in the form */
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    console.log(name, value);
     if (name === "runtimeHours" || name === "runtimeMinutes") {
       console.log("djshjb");
       setRuntime((prevState) => {
@@ -366,7 +367,7 @@ function EventPage() {
                       placeholder="Date"
                     />
                   </label>
-                  <div className="runtime">
+                  {/* <div className="runtime">
                     <label>
                       Runtime
                       <input
@@ -384,7 +385,18 @@ function EventPage() {
                         placeholder="mins"
                       />
                     </label>
-                  </div>
+                  </div> */}
+                  <label>
+                    Runtime
+                    <input
+                      type="text"
+                      name="runtime"
+                      value={newEvent.runtime}
+                      onChange={handleInputChange}
+                      placeholder="e.g., 2 hrs 10 mins"
+                    />
+                  </label>
+
                   <label>
                     Time
                     <input
