@@ -3,6 +3,9 @@ import axios from "../../axios";
 import "./Movies.css";
 import { storage } from "../../firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import ShowPage from "../Show/Show";
+import MoviePreview from "../../components/Preview/MoviePreview";
+import { useNavigate } from "react-router-dom";
 
 function MoviePage() {
   const [uploading, setUploading] = useState(false);
@@ -19,7 +22,7 @@ function MoviePage() {
     cover_path: "",
     released_date: "",
     runtime: "",
-    schedules: [{ date: "", time: "", price: "" }],
+    schedules: [{ date: "", time: "", price: "", seats: [[]] }],
   });
   const [movieId, setMovieId] = useState("");
   const [editMode, setEditMode] = useState(false);
@@ -30,8 +33,10 @@ function MoviePage() {
     coverImage: null,
   });
 
+  const navigate = useNavigate();
+
+  // Fetch Movies from the backend API
   useEffect(() => {
-    // Fetch Movies from the backend API
     axios
       .get("Movies")
       .then((response) => setMovies(response.data))
@@ -46,109 +51,62 @@ function MoviePage() {
   const handleFileChange = (event, name) => {
     if (event.target.files[0]) {
       setImageFile({ ...imageFile, [name]: event.target.files[0] });
-      // handleUpload();
     }
   };
 
-  const handleAddMovie_ = () => {
-    let poster_path = "";
-    let cover_path = "";
+  const handleAddMovie_ = async (e) => {
+    e.preventDefault();
     setUploading(true);
+    let poster_path = newMovie.poster_path,
+      cover_path = newMovie.cover_path;
+    try {
+      if (imageFile.posterImage) {
+        const posterSnapshot = await uploadBytes(
+          ref(storage, `images/${imageFile.posterImage.name}`),
+          imageFile.posterImage
+        );
+        poster_path = await getDownloadURL(posterSnapshot.ref);
+        console.log("Poster path:", poster_path);
+      }
 
-    if (imageFile.coverImage && imageFile.posterImage) {
-      const storageRef = ref(storage, `images/${imageFile.posterImage.name}`);
-      uploadBytes(storageRef, imageFile.posterImage)
-        .then((snapshot) => {
-          getDownloadURL(snapshot.ref).then((url) => {
-            poster_path = url;
-            // setNewMovie({ ...newMovie, poster_path: url });
-            console.log("Poster Image File available at", url);
+      if (imageFile.coverImage) {
+        const coverSnapshot = await uploadBytes(
+          ref(storage, `images/${imageFile.coverImage.name}`),
+          imageFile.coverImage
+        );
+        cover_path = await getDownloadURL(coverSnapshot.ref);
+        console.log("Cover path:", cover_path);
+      }
 
-            // upload the cover image
-            const storageRef = ref(
-              storage,
-              `images/${imageFile.coverImage.name}`
-            );
+      const movieData = {
+        ...newMovie,
+        poster_path,
+        cover_path,
+        admin_id,
+      };
 
-            uploadBytes(storageRef, imageFile.coverImage) // Upload the file
-              .then((snapshot) => {
-                getDownloadURL(snapshot.ref).then((url) => {
-                  cover_path = url;
-                  setNewMovie({
-                    ...newMovie,
-                    poster_path: poster_path,
-                    cover_path: cover_path,
-                  });
-                  console.log("Cover Image File available at", url);
+      const url_ = editMode ? `movies/${movieId}` : "movies";
+      const method = editMode ? "put" : "post";
 
-                  const url_ = editMode ? `movies/${movieId}` : "movies";
-                  const method = editMode ? "put" : "post";
-                  console.log(newMovie);
+      const response = await axios({
+        method,
+        url: url_,
+        data: movieData,
+      });
 
-                  axios({
-                    method: method,
-                    url: url_,
-                    data: {
-                      newMovie,
-                      cover_path,
-                      poster_path,
-                      admin_id: admin_id,
-                    },
-                  })
-                    .then((response) => {
-                      console.log(
-                        `${editMode ? "Updated" : "Added"} movie successfully!`
-                      );
-                      console.log(response.data);
-                      setEditMode(false);
-                      setIsModalOpen(false); // Close modal after successful operation
-                      setUploading(false);
-                    })
-                    .catch((error) => {
-                      console.error("Error saving movie:", error);
-                      setUploading(false);
-                    });
-                });
-              });
-          });
-        })
-        .catch((error) => {
-          console.error("Error uploading file: ", error);
-        });
+      console.log(
+        `${editMode ? "Updated" : "Added"} movie successfully!`,
+        response.data
+      );
+      setIsModalOpen(false);
+      setEditMode(false);
+      resetForm();
+    } catch (error) {
+      console.error("Error saving movie:", error);
+    } finally {
+      setUploading(false);
     }
   };
-
-  const handleScheduleChange = (index, e) => {
-    const { name, value } = e.target;
-    const newSchedules = [...newMovie.schedules];
-    newSchedules[index] = { ...newSchedules[index], [name]: value };
-    setNewMovie({ ...newMovie, schedules: newSchedules });
-  };
-
-  const handleAddSchedule = () => {
-    setNewMovie({
-      ...newMovie,
-      schedules: [...newMovie.schedules, { date: "", time: "", price: "" }],
-    });
-  };
-
-  // const handleAddMovie = () => {
-  //   const url = editMode ? `movies/${movieId}` : "movies";
-  //   const method = editMode ? "put" : "post";
-
-  //   axios({
-  //     method: method,
-  //     url: url,
-  //     data: newMovie,
-  //   })
-  //     .then((response) => {
-  //       console.log(`${editMode ? "Updated" : "Added"} movie successfully!`);
-  //       console.log(response.data);
-  //       setEditMode(false);
-  //       setIsModalOpen(false); // Close modal after successful operation
-  //     })
-  //     .catch((error) => console.error("Error saving movie:", error));
-  // };
 
   const handleEditMovie = (_id) => {
     axios
@@ -185,6 +143,26 @@ function MoviePage() {
       .catch((error) => console.error("Error deleting Movie:", error));
   };
 
+  const resetForm = () => {
+    setNewMovie({
+      admin_id: "",
+      title: "",
+      language: "",
+      description: "",
+      main_genre: "",
+      sub_genres: [],
+      poster_path: "",
+      cover_path: "",
+      released_date: "",
+      runtime: "",
+      schedules: [{ date: "", time: "", price: "" }],
+    });
+    setImageFile({
+      posterImage: null,
+      coverImage: null,
+    });
+  };
+
   return (
     <div className="movies-page">
       <div className="movie-title-bar">
@@ -200,40 +178,29 @@ function MoviePage() {
             <th>Language</th>
             <th>Genre</th>
             <th>Run Time</th>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Price</th>
+            <th>Released Date</th>
+            {/* <th>Time</th>
+            <th>Price</th> */}
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {Movies.map((Movie) => (
             <tr key={Movie._id}>
-              <td>{Movie.title}</td>
+              <td
+                onClick={() =>
+                  navigate(
+                    `/moviespage/showpage`
+                    // `/moviepage/showpage/seatpage/${Movie._id}`
+                  )
+                }
+              >
+                {Movie.title}
+              </td>
               <td>{Movie.language}</td>
               <td>{Movie.main_genre}</td>
               <td>{Movie.runtime}</td>
-              <td>
-                {Movie.schedules.map((schedule, index) => (
-                  <div key={index}>
-                    <p>{schedule.date}</p>
-                  </div>
-                ))}
-              </td>
-              <td>
-                {Movie.schedules.map((schedule, index) => (
-                  <div key={index}>
-                    <p>{schedule.time}</p>
-                  </div>
-                ))}
-              </td>
-              <td>
-                {Movie.schedules.map((schedule, index) => (
-                  <div key={index}>
-                    <p>{schedule.price}</p>
-                  </div>
-                ))}
-              </td>
+              <td>{Movie.released_date.split("T")[0]}</td>
               <td>
                 <button
                   className="edit-btn"
@@ -247,6 +214,7 @@ function MoviePage() {
                 >
                   Delete
                 </button>
+                <MoviePreview id={Movie._id} />
               </td>
             </tr>
           ))}
@@ -261,7 +229,9 @@ function MoviePage() {
               {/* Close icon */}
               <span
                 className="close-icon"
-                onClick={() => setIsModalOpen(false)}
+                onClick={() => {
+                  setIsModalOpen(false), resetForm();
+                }}
               >
                 &times;
               </span>
@@ -288,16 +258,6 @@ function MoviePage() {
                     />
                   </label>
                   <label>
-                    <textarea
-                      name="description"
-                      value={newMovie.description}
-                      onChange={handleInputChange}
-                      placeholder="Description"
-                      className="description"
-                      rows={6}
-                    />
-                  </label>
-                  <label>
                     <input
                       type="text"
                       name="main_genre"
@@ -316,102 +276,78 @@ function MoviePage() {
                     />
                   </label>
                   <label>
-                    Image URL
+                    Poster Image
+                    {/* Display the current poster image */}
+                    {newMovie.poster_path && (
+                      <div>
+                        <img
+                          src={newMovie.poster_path}
+                          alt="Poster"
+                          style={{ width: "30px", height: "50px" }}
+                        />
+                      </div>
+                    )}
+                    {/* Input field to upload a new poster */}
                     <input
                       type="file"
                       name="poster_path"
-                      // value={newMovie.poster_path}
                       onChange={(e) => handleFileChange(e, "posterImage")}
-                      placeholder="Image URL"
+                      accept="image/*"
                     />
                   </label>
-                  {/* <label>
-                    <input
-                      type="text"
-                      name="poster_path"
-                      value={newMovie.poster_path}
-                      onChange={handleInputChange}
-                      placeholder="Image URL"
-                    />
-                  </label> */}
+
                   <label>
-                    Cover URL
+                    Cover Image
+                    {/* Display the current cover image */}
+                    {newMovie.cover_path && (
+                      <div>
+                        <img
+                          src={newMovie.cover_path}
+                          alt="Cover"
+                          style={{ width: "30px", height: "50px" }}
+                        />
+                      </div>
+                    )}
+                    {/* Input field to upload a new cover image */}
                     <input
                       type="file"
                       name="cover_path"
-                      // value={newMovie.cover_path}
                       onChange={(e) => handleFileChange(e, "coverImage")}
-                      placeholder="Cover URL"
+                      accept="image/*" // Restrict to image files only
                     />
                   </label>
-                  {/* <label>
-                    <input
-                      type="text"
-                      name="cover_path"
-                      value={newMovie.cover_path}
-                      onChange={handleInputChange}
-                      placeholder="Cover URL"
-                    />
-                  </label> */}
                 </div>
                 <div className="column">
+                  <label>
+                    Description
+                    <textarea
+                      name="description"
+                      value={newMovie.description}
+                      onChange={handleInputChange}
+                      placeholder="Description"
+                      className="description"
+                      rows={12}
+                    />
+                  </label>
                   <label>
                     Released Date
                     <input
                       type="date"
                       name="released_date"
-                      value={newMovie.released_date}
+                      value={newMovie.released_date.split("T")[0]}
                       onChange={handleInputChange}
-                      placeholder="Released Date"
                     />
                   </label>
                   <label>
-                    Run Time (minutes)
+                    Runtime
                     <input
-                      type="number"
+                      type="text"
                       name="runtime"
                       value={newMovie.runtime}
                       onChange={handleInputChange}
-                      placeholder="Run Time"
+                      placeholder="e.g., 2 hrs 10 mins"
                     />
                   </label>
-
-                  <div className="scroll-schedules">
-                    {newMovie.schedules.map((schedule, index) => (
-                      <div key={index}>
-                        <label>
-                          Date
-                          <input
-                            type="date"
-                            name="date"
-                            value={schedule.date}
-                            onChange={(e) => handleScheduleChange(index, e)}
-                          />
-                        </label>
-                        <label>
-                          Time
-                          <input
-                            type="time"
-                            name="time"
-                            value={schedule.time}
-                            onChange={(e) => handleScheduleChange(index, e)}
-                          />
-                        </label>
-                        <label>
-                          Price
-                          <input
-                            type="number"
-                            name="price"
-                            value={schedule.price}
-                            onChange={(e) => handleScheduleChange(index, e)}
-                          />
-                        </label>
-                      </div>
-                    ))}
-                  </div>
-                  <button type="button" onClick={handleAddSchedule}>
-                    Add Another Schedule
-                  </button>
                 </div>
               </div>
 
@@ -420,8 +356,6 @@ function MoviePage() {
                 className="form-submit"
                 onClick={handleAddMovie_}
               >
-                {}
-
                 {uploading
                   ? "Uploading..."
                   : editMode

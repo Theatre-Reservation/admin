@@ -1,0 +1,159 @@
+.view-btn {
+    padding: 8px 12px;
+    margin-right: 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 8px;
+    width: 70px;
+}
+
+.view-btn {
+    background-color:#007bff;
+    color: white;
+}
+
+.view-btn:hover {
+    background-color: #0469d4;
+}
+
+/* The Modal (background) */
+.modal {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(5px);
+}
+
+/* Modal Content */
+.modal-content {
+    background: #fdfbfb;
+    padding: 5px 20px 10px 20px; 
+    border-radius: 8px;
+    width: 700px;
+    position: relative;
+}
+
+.modal-content h1 {
+    margin-left: 15px;
+    margin-bottom: 20px;
+    color: #000;
+    font-style: oblique;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Close Button */
+.close-icon {
+    cursor: pointer;
+    margin-right: 5px;
+    font-size: 24px;
+    align-items: end;
+    font-weight: bold;
+    color: #333;
+}
+
+.close-icon:hover {
+    color: #e40f0f;
+}
+
+/* Overlay */
+.overlay {
+    padding: 20px;
+}
+
+/* Adjust the movie cover background */
+.movie-cover {
+    background-size: cover;
+    background-position: center;
+    height: 350px;
+    position: relative;
+    border-radius: 10px;
+}
+
+.movie-header {
+    display: flex;
+    align-items: center;
+}
+
+.movie-poster {
+    width: 125px;
+    margin-right: 20px;
+    border-radius: 7.5%;
+}
+
+.movie-details {
+    color: rgb(14, 9, 9);
+}
+
+.movie-synopsis {
+    margin-top: 20px;
+    color: rgb(7, 17, 26);
+    font-family:'Times New Roman', Times, serif;
+    font-style: italic;
+}
+
+.movie-meta {
+    margin: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+/* .movie-meta span {
+    display: block;
+} */
+
+.movie-synopsis h3 {
+    margin: 5px;
+}
+
+.movie-synopsis p {
+    margin-top: 0px;
+}
+
+.event-container {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    max-width: 120px;
+    padding: 20px;
+    background-color: #f8f8f8;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.event-poster {
+    flex: 1 1 300px;
+    margin-right: 20px;
+}
+
+.event-poster img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+}
+
+.event-details {
+    flex: 3 1 600px;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.event-title,
+.event-description,
+.event-info p {
+    margin: 10px 0;
+}
