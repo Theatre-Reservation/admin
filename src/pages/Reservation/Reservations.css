@@ -1,5 +1,6 @@
 .reservations-page {
     padding: 1.5rem;
+    overflow-y: auto;
 }
 
 .reservations-page h1 {
@@ -73,6 +74,7 @@
 .edit-btn {
     background-color: #4CAF50;
     color: white;
+    margin-bottom: 8px;
 }
 
 .delete-btn {

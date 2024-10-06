@@ -1,5 +1,6 @@
 .movies-page {
     padding: 1.5rem;
+        overflow-y: auto;
 }
 .movies-page .movie-title-bar {
     display: flex;

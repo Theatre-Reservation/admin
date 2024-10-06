@@ -1,5 +1,6 @@
 .events-page {
     padding: 1.5rem;
+    overflow-y: auto;
 }
 
 .events-title-bar {
