@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   BsFillArchiveFill,
   BsFillGrid3X3GapFill,
@@ -24,8 +24,39 @@ import {
 import DashboardData from "./DashboardData";
 import "./Dashboard.css";
 import Card from "../../components/Card/Card";
+import axios from "../../axios";
 
 function Dashboard() {
+  const [totalshows, setTotalShows] = React.useState(0);
+  const [seats, setSeats] = React.useState([[]]);
+
+  useEffect(() => {
+    // Fetch data from Show API from "http://localhost:8000/api/v1/shows/admin/64e1f26b2a91d130d5a14e3f"
+    axios
+      .get("/shows/admin/64e1f26b2a91d130d5a14e3f")
+      .then((res) => {
+        // count of total shows
+        setTotalShows(res.data.length);
+        // set seats
+        setSeats(res.data.price);
+
+        console.log(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
+  // calculate revenue
+  const revenue = (seats) => {
+    let revenue = 0;
+    seats.map((seat) => {
+      revenue += seat.price;
+    });
+    return revenue;
+  };
+  console.log("seats", seats);
+
   const DashData = [
     { name: "Deadpool", value: 400, color: "#0088FE" },
     { name: "Dune", value: 300, color: "#00C49F" },
@@ -33,9 +64,9 @@ function Dashboard() {
     { name: "Despicable", value: 100, color: "#FF8042" },
   ];
 
-  const Total_Revenue = (DashboardData) => {
-    DashboardData.map()
-  }
+  // const Total_Revenue = (DashboardData) => {
+  //   DashboardData.map()
+  // }
 
   return (
     <main className="main-container">
@@ -45,9 +76,9 @@ function Dashboard() {
 
       <div className="main-cards">
         <Card name="Total Booking" value="53" icon={BsFillArchiveFill} />
-        <Card name="Revenue" value="12" icon={BsFillGrid3X3GapFill} />
-        <Card name="Today's Users" value="33" icon={BsPeopleFill} />
-        <Card name="Shows" value="10" icon={BsFillBellFill} />
+        <Card name="Revenue" value={revenue} icon={BsFillGrid3X3GapFill} />
+        <Card name="Users" value="33" icon={BsPeopleFill} />
+        <Card name="Shows" value={totalshows} icon={BsFillBellFill} />
       </div>
 
       <div className="charts">

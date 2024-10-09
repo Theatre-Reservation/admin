@@ -10,12 +10,13 @@ function ShowsPage() {
   //   const [editingMode, setEditingMode] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newShow, setNewShow] = useState({
-    movieTitle: "",
-    theater: "",
+    movieTitle: "Deadpool & Wolverine",
+    theater: "Liberty Cinema - Colombo",
     date: "",
     time: "",
     price: "",
-    availableSeats: "",
+    reserved_seats: ["A5", "C7", "F2"],
+    availableSeats: "80",
   });
   const navigate = useNavigate();
 
@@ -86,7 +87,7 @@ function ShowsPage() {
   // Function to save edited show
   const saveShow = async () => {
     try {
-      await axios.put(`/shows/${editingShow._id}`, editingShow);
+      await axios.patch(`/shows/${editingShow._id}`, editingShow);
       setShows((prevShows) =>
         prevShows.map((show) =>
           show._id === editingShow._id ? editingShow : show
