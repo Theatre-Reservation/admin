@@ -4,6 +4,7 @@ import "./Events.css";
 import { storage } from "../../firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import EventPreview from "../../components/Preview/EventPreview";
+import { toast } from "react-toastify";
 
 function EventPage() {
   const [uploading, setUploading] = useState(false);
@@ -166,6 +167,7 @@ function EventPage() {
   const handleAddOrEditEvent = () => {
     const url = editMode ? `events/${editingEventId}` : "events";
     const method = editMode ? "put" : "post";
+    const tost = editMode ? "Updated" : "Added";
 
     axios({
       method: method,
@@ -178,6 +180,15 @@ function EventPage() {
       .then((response) => {
         console.log(`${editMode ? "Updated" : "Added"} event successfully!`);
         console.log("Response data:", response.data);
+        toast.success(`Event ${tost} successfully!`, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
         setEditMode(false);
         setEventFormVisible(false); // Close form after successful operation
         if (editMode) {
@@ -240,6 +251,15 @@ function EventPage() {
         setEvents((prevEvents) =>
           prevEvents.filter((event) => event._id !== id)
         );
+        toast.success("Event deleted successfully!", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
       })
       .catch((error) => console.error("Error deleting event:", error));
   };
