@@ -63,9 +63,9 @@ const LoginPage = () => {
             });
             setError(err.response.data.message);
           } else {
-            toast("An error occurred during login. Please try again.", {
-              theme: "dark",
-            });
+            // toast("An error occurred during login. Please try again.", {
+            //   theme: "dark",
+            // });
             setError("An error occurred during login. Please try again.");
           }
         });

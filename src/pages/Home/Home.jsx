@@ -25,7 +25,6 @@ import DashboardData from "./DashboardData";
 import "./Dashboard.css";
 import Card from "../../components/Card/Card";
 import axios from "../../axios";
-import { toast } from "react-toastify";
 
 function Dashboard() {
   const [totalshows, setTotalShows] = React.useState(0);
