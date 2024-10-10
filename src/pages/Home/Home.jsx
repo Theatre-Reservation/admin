@@ -138,7 +138,7 @@ function Dashboard() {
         />
         <Card
           name="Revenue"
-          value={parseInt(totalrevenue, 10)}
+          value={`Rs ${parseInt(totalrevenue, 10)}`}
           icon={BsFillGrid3X3GapFill}
         />
         <Card
