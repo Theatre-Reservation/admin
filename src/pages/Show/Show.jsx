@@ -63,12 +63,12 @@ function ShowsPage() {
     setEditingShow(showToEdit);
     // setEditingMode(true);
     setNewShow({
-      movieTitle: showToEdit.movieTitle,
+      movieTitle: showToEdit.movie,
       theater: showToEdit.theater,
       date: showToEdit.date,
       time: showToEdit.time,
       price: showToEdit.price,
-      availableSeats: showToEdit.availableSeats,
+      availableSeats: showToEdit.available_seats,
     });
     setIsModalOpen(true); // Open the modal
   };
@@ -122,7 +122,7 @@ function ShowsPage() {
   };
 
   const showSeats = (_id) => {
-    navigate(`/moviespage/showpage/seatpage/${_id}`);
+    navigate(`/movies/shows/seats/${_id}`);
     console.log("show seats", _id);
   };
 

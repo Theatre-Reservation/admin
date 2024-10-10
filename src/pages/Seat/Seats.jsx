@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "../../axios";
 import "./Seats.css";
+import { useNavigate } from "react-router-dom";
 
 // Define initial layouts for different seating arrangements
 const predefinedLayouts = {
@@ -11,7 +12,6 @@ const predefinedLayouts = {
     [1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
     [1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
     [1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
-
   ],
   Round: [
     [0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0],
@@ -38,6 +38,7 @@ const SEAT_STATUSES = {
 };
 
 const SeatsPage = () => {
+  const navigator = useNavigate();
   // const { id } = useParams();
 
   const [layout, setLayout] = useState("Box"); // Selected layout type
@@ -45,18 +46,20 @@ const SeatsPage = () => {
   const [error, setError] = useState(null);
 
   const handleSaveLayout = async (id) => {
-    id = "66e71e5ed8b8a2a660fae78b";
+    id = "67054285a5360cb63b353c11";
+    // url = "http://localhost:8000/api/v1/shows/67054285a5360cb63b353c11/seats";
     try {
-      const response = await axios.patch(`movies/${id}/seats`, {
+      const response = await axios.patch(`shows/${id}/seats`, {
         seats: seatLayout,
       });
       console.log("Layout saved successfully:", response.data);
       setError(null);
     } catch (error) {
       console.error("Error saving layout:", error);
-      // setError("Failed to save layout. Please try again.");
-      setError("Layout saved successfully");
+      setError("Failed to save layout. Please try again.");
+      // setError("Layout saved successfully");
     }
+    navigator("/movies/shows");
   };
 
   // Handle layout change
