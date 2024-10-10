@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "../../axios";
 import "./Seats.css";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 // Define initial layouts for different seating arrangements
 const predefinedLayouts = {
@@ -54,6 +55,15 @@ const SeatsPage = () => {
       });
       console.log("Layout saved successfully:", response.data);
       setError(null);
+      toast.success("Layout saved successfully", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     } catch (error) {
       console.error("Error saving layout:", error);
       setError("Failed to save layout. Please try again.");
@@ -61,6 +71,21 @@ const SeatsPage = () => {
     }
     navigator("/movies/shows");
   };
+
+  // set seat layout from backend
+  useEffect(() => {
+    // id = "67054285a5360cb63b353c11";
+
+    // http://localhost:8000/api/v1/shows/67054285a5360cb63b353c11/seats
+    axios
+      .get(`/shows/67054285a5360cb63b353c11/seats`)
+      .then((res) => {
+        setSeatLayout(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   // Handle layout change
   const handleLayoutChange = (e) => {

@@ -6,6 +6,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import ShowPage from "../Show/Show";
 import MoviePreview from "../../components/Preview/MoviePreview";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function MoviePage() {
   const [uploading, setUploading] = useState(false);
@@ -99,6 +100,15 @@ function MoviePage() {
         response.data
       );
       setIsModalOpen(false);
+      toast.success(`Movie ${editMode ? "updated" : "added"} successfully`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
       setEditMode(false);
       resetForm();
     } catch (error) {
@@ -139,6 +149,15 @@ function MoviePage() {
       .delete(`movies/${id}`)
       .then(() => {
         setMovies(Movies.filter((Movie) => Movie._id !== id));
+        toast.success("Movie deleted successfully", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
       })
       .catch((error) => console.error("Error deleting Movie:", error));
   };

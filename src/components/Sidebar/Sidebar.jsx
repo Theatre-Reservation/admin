@@ -67,7 +67,9 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </Link>
             </li>
             <li className="sidebar-log-out">
-              <Link to="/">Log out</Link>
+              <Link to="/">
+                <p>Log out</p>
+              </Link>
             </li>
           </ul>
         </aside>
