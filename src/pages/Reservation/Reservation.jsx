@@ -132,7 +132,7 @@ function ReservationsPage() {
           <tr>
             {/* <th onClick={() => sortBy("customerId")}>Reservation ID</th> */}
             <th onClick={() => sortBy("movieTitle")}>Movie Title</th>
-            <th onClick={() => sortBy("theater")}>Theater</th>
+            {/* <th onClick={() => sortBy("theater")}>Theater</th> */}
             <th>Reserved Seats</th>
             {/* <th onClick={() => sortBy("available_seats")}>Available Seats</th> */}
             <th onClick={() => sortBy("price")}>Price</th>
@@ -144,7 +144,7 @@ function ReservationsPage() {
             <tr key={reservation._id}>
               {/* <td>{reservation._id}</td> */}
               <td>{reservation.movie}</td>
-              <td>{reservation.theater}</td>
+              {/* <td>{reservation.theater}</td> */}
               {/* <td>{reservation.reserved_seats.join(", ")}</td> */}
               <td>{reservation.available_seats}</td>
               <td>{reservation.price}</td>
