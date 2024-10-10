@@ -32,7 +32,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
 
           <ul className="sidebar-list">
             <li className="sidebar-list-item">
-              <Link to="/">
+              <Link to="/home">
                 <BsGrid1X2Fill className="icon" /> Dashboard
               </Link>
             </li>
@@ -42,28 +42,33 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </Link>
               </li> */}
             <li className="sidebar-list-item">
-              <Link to="/moviespage">
-                <BsPeopleFill className="icon" /> movies
+              <Link to="/movies">
+                <BsPeopleFill className="icon" /> Movies
               </Link>
             </li>
             <li className="sidebar-list-item">
-              <Link to="/eventspage">
+              <Link to="/events">
                 <BsPeopleFill className="icon" /> Events
               </Link>
             </li>
             <li className="sidebar-list-item">
-              <Link to="/reservationspage">
+              <Link to="/reservations">
                 <BsListCheck className="icon" /> Reservations
               </Link>
             </li>
-              <li className="sidebar-list-item">
-                <Link to="/reportspage">
-                  <BsFillArchiveFill className="icon" /> Reports
-                </Link>
-              </li>
+            <li className="sidebar-list-item">
+              <Link to="/reportspage">
+                <BsFillArchiveFill className="icon" /> Reports
+              </Link>
+            </li>
             <li className="sidebar-list-item">
               <Link to="/settings">
                 <BsFillGearFill className="icon" /> Settings
+              </Link>
+            </li>
+            <li className="sidebar-log-out">
+              <Link to="/">
+                <p>Log out</p>
               </Link>
             </li>
           </ul>

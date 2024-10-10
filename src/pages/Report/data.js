@@ -6,12 +6,13 @@ export const getDummyReportData = (reportType, timePeriod) => {
   switch (reportType) {
     case "sales":
       dummyResponse = {
-        title: `Sales Report (${timePeriod})`,
+        title: `Sales (Booking) Report (${timePeriod})`,
         data: `
-          Total sales: $1500
-          Product A: $500
-          Product B: $300
-          Product C: $700
+          Total sales: 74
+            Deadpool: 13 tickets
+            Dune: 12 tickets
+            Twisters: 10 tickets
+            Despicable: 9 tickets
         `,
       };
       break;
@@ -20,9 +21,9 @@ export const getDummyReportData = (reportType, timePeriod) => {
       dummyResponse = {
         title: `Revenue Report (${timePeriod})`,
         data: `
-          Total revenue: $2500
-          Service X: $1500
-          Service Y: $1000
+          Total revenue: Rs. 119400
+            Deadpool: Rs 15000
+            Dune: Rs 1000
         `,
       };
       break;
@@ -31,9 +32,10 @@ export const getDummyReportData = (reportType, timePeriod) => {
       dummyResponse = {
         title: `Popular Shows Report (${timePeriod})`,
         data: `
-          Show 1: 500 tickets
-          Show 2: 300 tickets
-          Show 3: 200 tickets
+          Deadpool: 43 tickets
+          Dune: 12 tickets
+          Twisters: 10 tickets
+          Despicable: 9 tickets
         `,
       };
       break;

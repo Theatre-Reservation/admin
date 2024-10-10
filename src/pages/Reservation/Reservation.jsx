@@ -134,18 +134,18 @@ function ReservationsPage() {
             <th onClick={() => sortBy("movieTitle")}>Movie Title</th>
             <th onClick={() => sortBy("theater")}>Theater</th>
             <th>Reserved Seats</th>
-            <th onClick={() => sortBy("available_seats")}>Available Seats</th>
+            {/* <th onClick={() => sortBy("available_seats")}>Available Seats</th> */}
             <th onClick={() => sortBy("price")}>Price</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          {reservations.map((reservation) => (
-            <tr key={reservation.id}>
+          {reservations?.map((reservation) => (
+            <tr key={reservation._id}>
               {/* <td>{reservation._id}</td> */}
               <td>{reservation.movie}</td>
               <td>{reservation.theater}</td>
-              <td>{reservation.reserved_seats.join(", ")}</td>
+              {/* <td>{reservation.reserved_seats.join(", ")}</td> */}
               <td>{reservation.available_seats}</td>
               <td>{reservation.price}</td>
               <td className="edit-delete-btns">
@@ -170,9 +170,23 @@ function ReservationsPage() {
       {isModalOpen && (
         <div className="modal">
           <div className="modal-content">
-            <h2>
-              {editingReservation ? "Edit Reservation" : "Add New Reservation"}
-            </h2>
+            <div className="modal-header">
+              <h2>
+                {editingReservation
+                  ? "Edit Reservation"
+                  : "Add New Reservation"}
+              </h2>{" "}
+              {/* Close icon */}
+              <span
+                className="close-icon"
+                onClick={() => {
+                  setIsModalOpen(false), resetForm();
+                }}
+              >
+                &times;
+              </span>
+            </div>
+
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -221,9 +235,9 @@ function ReservationsPage() {
                   ? "Save Changes"
                   : "Add Reservation"}
               </button>
-              <button type="button" onClick={() => setIsModalOpen(false)}>
+              {/* <button type="button" onClick={() => setIsModalOpen(false)}>
                 Cancel
-              </button>
+              </button> */}
             </form>
           </div>
         </div>
