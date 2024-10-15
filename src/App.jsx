@@ -37,13 +37,12 @@ function App() {
             {({ location }) => (
               <>
                 {location.pathname !== "/" &&
-                  location.pathname !==
-                    "/register"(
-                      <Sidebar
-                        openSidebarToggle={openSidebarToggle}
-                        OpenSidebar={OpenSidebar}
-                      />
-                    )}
+                  location.pathname !== "/register" && (
+                    <Sidebar
+                      openSidebarToggle={openSidebarToggle}
+                      OpenSidebar={OpenSidebar}
+                    />
+                  )}
                 <div
                   className={
                     openSidebarToggle ? "main-content expanded" : "main-content"
