@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }) => {
       // navigate ot the login page
       navigate("/");
     }
-  }, []);
+  }, [navigate]);
 
   return (
     <AuthContext.Provider value={{ user, login, logout }}>

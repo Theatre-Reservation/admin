@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Header from "./components/Header/Header";
+// import Header from "./components/Header/Header";
 import Sidebar from "./components/Sidebar/Sidebar";
 import ReservationsPage from "./pages/Reservation/Reservation";
 import EventPage from "./pages/Event/Events";
@@ -36,12 +36,14 @@ function App() {
           <LocationWrapper>
             {({ location }) => (
               <>
-                {location.pathname !== "/" && (
-                  <Sidebar
-                    openSidebarToggle={openSidebarToggle}
-                    OpenSidebar={OpenSidebar}
-                  />
-                )}
+                {location.pathname !== "/" &&
+                  location.pathname !==
+                    "/register"(
+                      <Sidebar
+                        openSidebarToggle={openSidebarToggle}
+                        OpenSidebar={OpenSidebar}
+                      />
+                    )}
                 <div
                   className={
                     openSidebarToggle ? "main-content expanded" : "main-content"

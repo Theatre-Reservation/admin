@@ -13,7 +13,7 @@ const DashboardData = [
   },
   {
     name: "Mar",
-    Total_Customers: 9800,
+    Total_Customers: 2800,
     Revenue: 2000,
     Trans_Amount: 2290,
   },
