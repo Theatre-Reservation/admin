@@ -39,7 +39,7 @@ function Dashboard() {
     startDate: new Date(),
     endDate: new Date(),
   });
-  const [timePeriod, setTimePeriod] = useState("yearly");
+  const [timePeriod, setTimePeriod] = useState("weekly");
   const [error, setError] = useState(null);
   const [dashboardData, setDashboardData] = useState([]);
 
