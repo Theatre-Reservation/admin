@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   BsFillArchiveFill,
   BsFillGrid3X3GapFill,
@@ -20,21 +20,52 @@ import {
   LineChart,
   Line,
 } from "recharts";
-
-import DashboardData from "./DashboardData";
 import "./Dashboard.css";
 import Card from "../../components/Card/Card";
 import axios from "../../axios";
 
 function Dashboard() {
-  const [totalshows, setTotalShows] = React.useState(0);
-  const [totalrevenue, setTotalRevenue] = React.useState(0);
-  const [totalbooking, setTotalBooking] = React.useState(0);
-  const [name, setName] = React.useState("");
-  const [data, setData] = React.useState(false);
-  const [movie, setMovie] = React.useState("");
+  const [totalshows, setTotalShows] = useState(0);
+  const [name, setName] = useState("");
+  // const [data, setData] = useState(false);
+  const [movie, setMovie] = useState("");
+  const [homeData, setHomeData] = useState({
+    totalBookings: "0",
+    totalRevenue: "0",
+    totalUsers: "0",
+  });
+  const [pieData, setPieData] = useState([]);
+  const [period, setPeriod] = useState({
+    startDate: new Date(),
+    endDate: new Date(),
+  });
+  const [timePeriod, setTimePeriod] = useState("yearly");
+  const [error, setError] = useState(null);
+  const [dashboardData, setDashboardData] = useState([]);
 
-  // const movie = "Majestic City - Colombo";
+  const changeTimePeriod = (e) => {
+    setTimePeriod(e.target.value);
+
+    const newPeriod = { ...period };
+
+    if (e.target.value === "weekly") {
+      newPeriod.startDate = new Date();
+      newPeriod.startDate.setDate(newPeriod.startDate.getDate() - 7);
+      newPeriod.endDate = new Date();
+    } else if (e.target.value === "monthly") {
+      newPeriod.startDate = new Date();
+      newPeriod.startDate.setDate(1);
+      newPeriod.endDate = new Date();
+      newPeriod.endDate.setMonth(newPeriod.endDate.getMonth() + 1);
+      newPeriod.endDate.setDate(0);
+    } else if (e.target.value === "yearly") {
+      newPeriod.startDate = new Date();
+      newPeriod.startDate.setMonth(0, 1);
+      newPeriod.endDate = new Date();
+      newPeriod.endDate.setFullYear(newPeriod.endDate.getFullYear() + 1, 0, 0);
+    }
+    setPeriod(newPeriod);
+  };
 
   // Fetch user profile when the component mounts
   useEffect(() => {
@@ -46,7 +77,6 @@ function Dashboard() {
         console.log("No token found. Please log in.");
         return;
       }
-
       try {
         const response = await axios.get(
           "http://localhost:8500/api/v1/user-auth/profile",
@@ -56,14 +86,13 @@ function Dashboard() {
             },
           }
         );
-        // toast("show"); // Set the user data returned from the backend
         console.log(response.data);
         setName(response.data.Name);
-        if (response.data.Name === "Majestic City - Colombo") {
-          setData(true);
-        } else {
-          setData(false);
-        }
+        // if (response.data.Name === "Majestic City - Colombo") {
+        //   setData(true);
+        // } else {
+        //   setData(false);
+        // }
         setMovie(response.data.Name);
       } catch (err) {
         console.log("Failed to fetch user data");
@@ -74,8 +103,63 @@ function Dashboard() {
     fetchUserProfile();
   }, []);
 
-  // const movie = name;
-  // console.log("jjj", movie);
+  useEffect(() => {
+    const fetchHomeData = async () => {
+      try {
+        const response = await axios.get(`transactions/revenue`, {
+          params: {
+            theater: name, // Check if name has something
+            startDate: period.startDate,
+            endDate: period.endDate,
+          },
+        });
+        console.log("Response Data: ", response.data);
+        if (response.data.length === 1) {
+          setHomeData({
+            totalBookings: response.data[0].totalBookings,
+            totalRevenue: response.data[0].totalRevenue,
+            totalUsers: response.data[0].totalUsers,
+          });
+        }
+      } catch (err) {
+        setError(err.message);
+      }
+    };
+    const fetchDashboardData = async () => {
+      try {
+        const response = await axios.get(`transactions/monthly-data`, {
+          params: {
+            theater: name, // Check if name has something
+            startDate: period.startDate,
+            endDate: period.endDate,
+          },
+        });
+        setDashboardData(response.data);
+      } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+      }
+    };
+    const pieData = async () => {
+      try {
+        const response = await axios.get(`transactions/topMovies`, {
+          params: {
+            theater: name, // Check if name has something
+            startDate: period.startDate,
+            endDate: period.endDate,
+          },
+        });
+        console.log("pie Data: ", response.data);
+        setPieData(response.data);
+      } catch (err) {
+        setError(err.message);
+      }
+    };
+    fetchHomeData();
+    fetchDashboardData();
+    pieData();
+  }, [name, timePeriod]);
+  // console.log("Revenue Data: ", homeData);
+  console.log("Dashboard Data: ", dashboardData);
 
   useEffect(() => {
     // Fetch data from Show API from "http://localhost:8000/api/v1/shows/admin/theater?theater=Majestic City - Colombo"
@@ -84,66 +168,45 @@ function Dashboard() {
       .then((res) => {
         // count of total shows
         setTotalShows(res.data.length);
-        console.log(res.data);
+        // console.log(res.data);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, [data]);
-
-  useEffect(() => {
-    // Fetch http://localhost:8000/api/v1/shows/admin/revenue?theater=Majestic City - Colombo
-    axios
-      .get(`/shows/admin/revenue?theater=${movie}`)
-      .then((res) => {
-        setTotalRevenue(res.data);
-        console.log(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [data]);
-
-  useEffect(() => {
-    // Fetch http://localhost:8000/api/v1/shows/admin/booking?theater=Majestic City - Colombo
-    axios
-      .get(`/shows/admin/booking?theater=${movie}`)
-      .then((res) => {
-        console.log(res.data);
-        setTotalBooking(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [data]);
-
-  const DashData = [
-    { name: "Deadpool", value: 43, color: "#0088FE" },
-    { name: "Dune", value: 12, color: "#00C49F" },
-    { name: "Twisters", value: 10, color: "#FFBB28" },
-    { name: "Despicable", value: 9, color: "#FF8042" },
-  ];
+  }, [movie]);
 
   return (
     <main className="main-container">
       <div className="main-title">
         <h1>{name}</h1>
+        <div className="filter">
+          <label htmlFor="timePeriod"></label>
+          <select
+            id="timePeriod"
+            value={timePeriod}
+            onChange={changeTimePeriod}
+          >
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+            <option value="yearly">Yearly</option>
+          </select>
+        </div>
       </div>
 
       <div className="main-cards">
         <Card
           name="Total Booking"
-          value={parseInt(totalbooking, 10)}
+          value={homeData.totalBookings}
           icon={BsFillArchiveFill}
         />
         <Card
           name="Revenue"
-          value={`Rs ${parseInt(totalrevenue, 10)}`}
+          value={`Rs ${homeData.totalRevenue}`}
           icon={BsFillGrid3X3GapFill}
         />
         <Card
-          name="Users"
-          value={parseInt(totalbooking / 3, 10)}
+          name="Total Users"
+          value={homeData.totalUsers}
           icon={BsPeopleFill}
         />
         <Card
@@ -157,7 +220,7 @@ function Dashboard() {
         {/* Bar Chart */}
         <ResponsiveContainer width="100%" height={300}>
           <BarChart
-            data={data ? DashboardData : []}
+            data={dashboardData}
             margin={{
               top: 5,
               right: 30,
@@ -168,17 +231,25 @@ function Dashboard() {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
-            <Tooltip />
+            <Tooltip
+              formatter={(value, name) => {
+                if (name === "Revenue") {
+                  return [`${value}K`, name]; // Divide by 1000 for Tooltip as well
+                }
+                return [value, name];
+              }}
+            />
             <Legend />
-            <Bar dataKey="Total_Customers" fill="#00C49F" />
+            <Bar dataKey="Total Booking" fill="#0088FE" />
             <Bar dataKey="Revenue" fill="#f69449" />
+            <Bar dataKey="Total Customers" fill="#00C49F" />
           </BarChart>
         </ResponsiveContainer>
 
         {/* Line Chart */}
         <ResponsiveContainer width="100%" height={300}>
           <LineChart
-            data={data ? DashboardData : []}
+            data={dashboardData}
             margin={{
               top: 5,
               right: 30,
@@ -189,16 +260,24 @@ function Dashboard() {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
-            <Tooltip />
+            <Tooltip
+              formatter={(value, name) => {
+                if (name === "Revenue") {
+                  return [`${value}K`, name]; // Divide by 1000 for Tooltip as well
+                }
+                return [value, name];
+              }}
+            />
             <Legend />
+
+            <Line type="monotone" dataKey="Total Booking" stroke="#0088FE" />
+            <Line type="monotone" dataKey="Revenue" stroke="#f69449" />
             <Line
               type="monotone"
-              dataKey="Total_Customers"
+              dataKey="Total Customers"
               stroke="#00C49F"
               activeDot={{ r: 8 }}
             />
-            <Line type="monotone" dataKey="Revenue" stroke="#f69449" />
-            <Line type="monotone" dataKey="Trans_Amount" stroke="#0088FE" />
           </LineChart>
         </ResponsiveContainer>
 
@@ -206,21 +285,61 @@ function Dashboard() {
         <ResponsiveContainer width="100%" height={300}>
           <PieChart>
             <Pie
-              data={data ? DashData : []}
-              margin={{
-                top: 0,
-                right: 30,
-                left: 20,
-                bottom: 15,
-              }}
+              data={pieData}
+              dataKey="Total Revenue"
+              nameKey="Movie"
+              cx="50%"
+              cy="50%"
+              outerRadius={100}
+              label
             >
-              {DashData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={entry.color} />
+              {pieData.map((entry, index) => (
+                <Cell
+                  key={`cell-${index}`}
+                  fill={
+                    index === 0
+                      ? "#0088FE"
+                      : index === 1
+                      ? "#00C49F"
+                      : index === 2
+                      ? "#FFBB28"
+                      : "#FF8042"
+                  }
+                />
               ))}
             </Pie>
             <Tooltip />
             <Legend />
           </PieChart>
+        </ResponsiveContainer>
+
+        {/* Bar Chart */}
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart
+            data={pieData}
+            margin={{
+              top: 5,
+              right: 30,
+              left: 20,
+              bottom: 5,
+            }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="Movie" />
+            <YAxis />
+            <Tooltip
+              formatter={(value, name) => {
+                if (name === "Total Revenue") {
+                  return [`${value}K`, name]; // Divide by 1000 for Tooltip as well
+                }
+                return [value, name];
+              }}
+            />
+            <Legend />
+            <Bar dataKey="Total Bookings" fill="#0088FE" />
+            <Bar dataKey="Total Revenue" fill="#f69449" />
+            <Bar dataKey="Total Users" fill="#00C49F" />
+          </BarChart>
         </ResponsiveContainer>
       </div>
     </main>

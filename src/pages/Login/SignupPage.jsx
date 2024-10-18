@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 const SignupPage = () => {
   const navigate = useNavigate();
   const [error, setError] = useState(""); // Error state
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -54,8 +56,10 @@ const SignupPage = () => {
   return (
     <div className="signup-container">
       <div className="form-box">
-        <h1>Sign Up</h1>
+        <h1>Welcome to Flash Ticket</h1>
         <form onSubmit={handleSubmit}>
+          {error && <div className="error-message">{error}</div>}
+
           <div className="input-group">
             <input
               type="text"
@@ -78,23 +82,35 @@ const SignupPage = () => {
           </div>
           <div className="input-group">
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               name="password"
               value={formData.password}
               onChange={handleChange}
               required
             />
             <label>Password</label>
+            <span
+              className="toggle-password"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? "Hide" : "Show"}
+            </span>
           </div>
           <div className="input-group">
             <input
-              type="password"
+              type={showConfirmPassword ? "text" : "password"}
               name="confirmPassword"
               value={formData.confirmPassword}
               onChange={handleChange}
               required
             />
             <label>Confirm Password</label>
+            <span
+              className="toggle-password"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            >
+              {showConfirmPassword ? "Hide" : "Show"}
+            </span>
           </div>
           <button type="submit" className="signup-btn">
             Create Account

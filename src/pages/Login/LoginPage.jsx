@@ -82,7 +82,7 @@ const LoginPage = () => {
           <div className="input-group">
             <label htmlFor="username">Email</label>
             <input
-              type="text"
+              type="ema"
               id="email"
               ref={userRef}
               value={username}
