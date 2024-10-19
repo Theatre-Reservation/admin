@@ -71,7 +71,7 @@ function Dashboard() {
   useEffect(() => {
     const fetchUserProfile = async () => {
       const newToken = localStorage.getItem("token");
-      console.log("Token: ", newToken);
+      // console.log("Token: ", newToken);
 
       if (!newToken) {
         console.log("No token found. Please log in.");
@@ -79,14 +79,14 @@ function Dashboard() {
       }
       try {
         const response = await axios.get(
-          "http://localhost:8500/api/v1/user-auth/profile",
+          "https://auth-service1-bkdhfbh9a3a2g4ba.canadacentral-01.azurewebsites.net/api/v1/user-auth/profile",
           {
             headers: {
               Authorization: `Bearer ${newToken}`,
             },
           }
         );
-        console.log(response.data);
+        // console.log(response.data);
         setName(response.data.Name);
         // if (response.data.Name === "Majestic City - Colombo") {
         //   setData(true);
@@ -154,28 +154,55 @@ function Dashboard() {
         setError(err.message);
       }
     };
+    const fetchShows = async () => {
+      const url = "http://localhost:8000/api/v1";
+      console.log(url);
+      try {
+        console.log("ssss");
+        console.log(name);
+        console.log(period.startDate);
+        const response = await axios.get(`shows/admin/theater`, {
+          params: {
+            theater: name,
+            startDate: period.startDate,
+            endDate: period.endDate,
+          },
+        });
+        console.log("awawawa");
+        console.log("Shows Data: ", response.data);
+        console.log("Total Shows:ss ", startDate);
+        setTotalShows(response.data.length);
+      } catch (err) {
+        setError(err.message);
+        console.error(error);
+      }
+    };
+    fetchShows();
     fetchHomeData();
     fetchDashboardData();
     pieData();
   }, [name, timePeriod]);
-  // console.log("Revenue Data: ", homeData);
-  console.log("Dashboard Data: ", dashboardData);
-  console.log(timePeriod);
-  console.log(period);
+  console.log(totalshows);
 
-  useEffect(() => {
-    // Fetch data from Show API from "http://localhost:8000/api/v1/shows/admin/theater?theater=Majestic City - Colombo"
-    axios
-      .get(`/shows/admin/theater?theater=${movie}`)
-      .then((res) => {
-        // count of total shows
-        setTotalShows(res.data.length);
-        // console.log(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [movie]);
+  // useEffect(() => {
+  //   // Fetch data from Show API from "http://localhost:8000/api/v1/shows/admin/theater?theater=Majestic City - Colombo"
+  //   axios
+  //     .get(`/shows/admin/theater`, {
+  //       params: {
+  //           theater: name, // Check if name has something
+  //           startDate: period.startDate,
+  //           endDate: period.endDate,
+  //         },
+  //     )
+  //     .then((res) => {
+  //       // count of total shows
+  //       setTotalShows(res.data.length);
+  //       // console.log(res.data);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // }, [movie]);
 
   return (
     <main className="main-container">
