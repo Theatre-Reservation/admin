@@ -40,10 +40,13 @@ const LoginPage = () => {
     } else {
       // Call API to sign up the user
       axios
-        .post("http://localhost:8500/api/v1/user-auth/login", {
-          Email: username,
-          Password: password,
-        })
+        .post(
+          "https://auth-service1-bkdhfbh9a3a2g4ba.canadacentral-01.azurewebsites.net/api/v1/user-auth/login",
+          {
+            Email: username,
+            Password: password,
+          }
+        )
         .then((res) => {
           console.log("Login Success:", res.data);
           localStorage.setItem("token", res.data.token); // Store token in local storage

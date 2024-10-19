@@ -29,12 +29,15 @@ const SignupPage = () => {
     } else {
       console.log("dsf");
       axios
-        .post("http://localhost:8500/api/v1/user-auth/signup", {
-          Name: formData.username,
-          Email: formData.email,
-          Password: formData.password,
-          isAdmin: true,
-        })
+        .post(
+          "https://auth-service1-bkdhfbh9a3a2g4ba.canadacentral-01.azurewebsites.net/api/v1/user-auth/signup",
+          {
+            Name: formData.username,
+            Email: formData.email,
+            Password: formData.password,
+            isAdmin: true,
+          }
+        )
         .then((res) => {
           console.log("Sign Up Success:", res.data);
           navigate("/");
