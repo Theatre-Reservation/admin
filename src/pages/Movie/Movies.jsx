@@ -13,7 +13,7 @@ function MoviePage() {
   const [Movies, setMovies] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newMovie, setNewMovie] = useState({
-    admin_id: "",
+    // admin_id: "",
     title: "",
     language: "",
     description: "",
@@ -27,12 +27,13 @@ function MoviePage() {
   });
   const [movieId, setMovieId] = useState("");
   const [editMode, setEditMode] = useState(false);
-  const admin_id = "64e1f26b2a91d130d5a14e3f";
+  // const admin_id = "64e1f26b2a91d130d5a14e3f";
 
   const [imageFile, setImageFile] = useState({
     posterImage: null,
     coverImage: null,
   });
+  const [error, setError] = useState(null);
 
   const navigate = useNavigate();
 
@@ -42,7 +43,7 @@ function MoviePage() {
       .get("Movies")
       .then((response) => setMovies(response.data))
       .catch((error) => console.error("Error fetching Movies:", error));
-  }, []);
+  }, [newMovie]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -53,6 +54,23 @@ function MoviePage() {
     if (event.target.files[0]) {
       setImageFile({ ...imageFile, [name]: event.target.files[0] });
     }
+  };
+
+  const validateForm = (data) => {
+    console.log("New Movievv:", data);
+    if (
+      !data.title || // Title is required
+      !data.language || // Language is required
+      !data.description || // Description is required
+      !data.main_genre || // Main genre is required
+      !data.poster_path || // Poster is required
+      !data.cover_path || // Cover is required
+      !data.released_date || // Released date is required
+      !data.runtime // Runtime is required
+    ) {
+      return false;
+    }
+    return true;
   };
 
   const handleAddMovie_ = async (e) => {
@@ -83,8 +101,21 @@ function MoviePage() {
         ...newMovie,
         poster_path,
         cover_path,
-        admin_id,
       };
+
+      if (!validateForm(movieData)) {
+        toast.error("Please fill all the fields", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+        setError("Please fill in all the required fields");
+        return;
+      }
 
       const url_ = editMode ? `movies/${movieId}` : "movies";
       const method = editMode ? "put" : "post";
@@ -126,7 +157,7 @@ function MoviePage() {
         const movie = response.data; // Assume movie data is in response.data
         setMovieId(_id);
         setNewMovie({
-          admin_id: admin_id,
+          // admin_id: admin_id,
           title: movie.title,
           language: movie.language,
           description: movie.description,
@@ -164,7 +195,7 @@ function MoviePage() {
 
   const resetForm = () => {
     setNewMovie({
-      admin_id: "",
+      // admin_id: "",
       title: "",
       language: "",
       description: "",

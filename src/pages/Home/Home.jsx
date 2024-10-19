@@ -36,7 +36,7 @@ function Dashboard() {
   });
   const [pieData, setPieData] = useState([]);
   const [period, setPeriod] = useState({
-    startDate: new Date(),
+    startDate: new Date(new Date().setDate(new Date().getDate() - 7)),
     endDate: new Date(),
   });
   const [timePeriod, setTimePeriod] = useState("weekly");
@@ -160,6 +160,8 @@ function Dashboard() {
   }, [name, timePeriod]);
   // console.log("Revenue Data: ", homeData);
   console.log("Dashboard Data: ", dashboardData);
+  console.log(timePeriod);
+  console.log(period);
 
   useEffect(() => {
     // Fetch data from Show API from "http://localhost:8000/api/v1/shows/admin/theater?theater=Majestic City - Colombo"
