@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import "./Show.css";
 import axios from "../../axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { AuthContext } from "../../context/AuthContext";
 
 function ShowsPage() {
+  const { user, login, logout } = useContext(AuthContext);
   const [uploading, setUploading] = useState(false);
   const [shows, setShows] = useState([]);
   const [editingShow, setEditingShow] = useState(null);
@@ -12,7 +15,7 @@ function ShowsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newShow, setNewShow] = useState({
     movie: "Deadpool & Wolverine",
-    theater: "Liberty Cinema - Colombo",
+    theater: "Majestic City - Colombo",
     date: "",
     time: "",
     price: "",
@@ -27,7 +30,11 @@ function ShowsPage() {
   useEffect(() => {
     const fetchShows = async () => {
       try {
-        const response = await axios.get(`/shows/${movie}`);
+        // http://localhost:8000/api/v1/shows/show?theater=Majestic City - Colombo&movie=Deadpool & Wolverine
+        const response = await axios.get(
+          `/shows/show?theater=${newShow.theater}&movie=${movie}`
+        );
+        console.log("response", `/shows/show?theater=${user}&movie=${movie}`);
         setShows(response.data);
         console.log("Shows fetched:", response.data);
         // console.log("Shows:", shows);
@@ -143,14 +150,6 @@ function ShowsPage() {
       const response = await axios.post("/shows", newShow);
       setShows((prevShows) => [...prevShows, response.data]);
       setIsModalOpen(false);
-      // setNewShow({
-      //   movieTitle: "",
-      //   theater: "",
-      //   date: "",
-      //   time: "",
-      //   price: "",
-      //   availableSeats: "",
-      // });
       resetForm();
       setUploading(false);
       toast.success("Show added successfully", {

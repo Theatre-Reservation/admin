@@ -56,7 +56,10 @@ function App() {
                     <Route path="/movies" element={<MoviePage />} />
                     <Route path="/events" element={<EventPage />} />
                     {/* <Route path="/seatpage" element={<ShowsPage />} /> */}
-                    <Route path="/movies/shows" element={<ShowsPage />} />
+                    <Route
+                      path="/movies?Movie=:title/shows"
+                      element={<ShowsPage />}
+                    />
                     <Route
                       path="/movies/shows/seats/:id"
                       exact

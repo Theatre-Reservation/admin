@@ -155,8 +155,6 @@ function Dashboard() {
       }
     };
     const fetchShows = async () => {
-      const url = "http://localhost:8000/api/v1";
-      console.log(url);
       try {
         console.log("ssss");
         console.log(name);
@@ -177,12 +175,14 @@ function Dashboard() {
         console.error(error);
       }
     };
-    fetchShows();
     fetchHomeData();
     fetchDashboardData();
+    fetchShows();
     pieData();
   }, [name, timePeriod]);
   console.log(totalshows);
+  console.log("Dashboard Data: ", dashboardData);
+  console.log("Pie Data: ", pieData);
 
   // useEffect(() => {
   //   // Fetch data from Show API from "http://localhost:8000/api/v1/shows/admin/theater?theater=Majestic City - Colombo"

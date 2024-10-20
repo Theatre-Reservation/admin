@@ -240,7 +240,7 @@ function MoviePage() {
               <td
                 onClick={() =>
                   navigate(
-                    `/movies/shows`
+                    `/movies?Movie=${Movie.title}/shows`
                     // `/moviepage/showpage/seatpage/${Movie._id}`
                   )
                 }
