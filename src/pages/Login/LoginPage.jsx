@@ -4,6 +4,7 @@ import "./LoginPage.css";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { AuthContext } from "../../context/AuthContext";
+import Spinner from "../../components/Spinner/Spinner";
 
 const LoginPage = () => {
   const { setAuth } = useContext(AuthContext); // To use AuthContext
@@ -12,6 +13,7 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     userRef.current.focus();
@@ -30,48 +32,71 @@ const LoginPage = () => {
     if (!username) {
       setError("Username cannot be empty");
       toast("Username cannot be empty", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        newestOnTop: false,
+        closeOnClick: true,
+        rtl: false,
+        pauseOnFocusLoss: true,
+        draggable: true,
+        pauseOnHover: true,
         theme: "dark",
       });
     } else if (!password) {
       setError("Password cannot be empty");
       toast("Password cannot be empty", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        newestOnTop: false,
+        closeOnClick: true,
+        rtl: false,
+        pauseOnFocusLoss: true,
+        draggable: true,
+        pauseOnHover: true,
         theme: "dark",
       });
     } else {
       // Call API to sign up the user
-      axios
-        .post(
-          "https://auth-service1-bkdhfbh9a3a2g4ba.canadacentral-01.azurewebsites.net/api/v1/user-auth/login",
-          {
-            Email: username,
-            Password: password,
-          }
-        )
-        .then((res) => {
-          console.log("Login Success:", res.data);
-          localStorage.setItem("token", res.data.token); // Store token in local storage
-          navigate("/home"); // Redirect to dashboard
-          setAuth(res.data.token); // Set token in context
-        })
-        .then(() => {
-          toast("Login Successful", {
-            theme: "dark",
+      setLoading(true),
+        axios
+          .post(
+            "https://auth-service1-bkdhfbh9a3a2g4ba.canadacentral-01.azurewebsites.net/api/v1/user-auth/login",
+            {
+              Email: username,
+              Password: password,
+            }
+          )
+          .then((res) => {
+            console.log("Login Success:", res.data);
+            localStorage.setItem("token", res.data.token); // Store token in local storage
+            navigate("/home"); // Redirect to dashboard
+            setAuth(res.data.token); // Set token in context
+          })
+          // .then(() => {
+          //   toast("Login Successful", {
+          //     theme: "dark",
+          //   });
+          // })
+          .catch((err) => {
+            // console.error("Login Error:", err);
+            if (
+              err.response &&
+              err.response.data &&
+              err.response.data.message
+            ) {
+              toast(err.response.data.message, {
+                theme: "dark",
+              });
+              setError(err.response.data.message);
+            } else {
+              setError("An error occurred during login. Please try again.");
+            }
+          })
+          .finally(() => {
+            setLoading(false);
           });
-        })
-        .catch((err) => {
-          console.error("Login Error:", err);
-          if (err.response && err.response.data && err.response.data.message) {
-            toast(err.response.data.message, {
-              theme: "dark",
-            });
-            setError(err.response.data.message);
-          } else {
-            // toast("An error occurred during login. Please try again.", {
-            //   theme: "dark",
-            // });
-            setError("An error occurred during login. Please try again.");
-          }
-        });
     }
   };
 
@@ -85,7 +110,7 @@ const LoginPage = () => {
           <div className="input-group">
             <label htmlFor="username">Email</label>
             <input
-              type="ema"
+              type="email"
               id="email"
               ref={userRef}
               value={username}
@@ -113,7 +138,7 @@ const LoginPage = () => {
 
           <div className="submit-group">
             <button type="submit" className="login-button">
-              Login
+              {loading ? <Spinner size="20px" /> : "Login"}
             </button>
           </div>
 
