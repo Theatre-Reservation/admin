@@ -4,12 +4,14 @@ import "./Reports.css";
 import { AuthContext } from "../../context/AuthContext";
 
 function ReportsPage() {
-  const [timePeriod, setTimePeriod] = useState("weekly");
+  const [timePeriod, setTimePeriod] = useState("yearly");
   const [reportType, setReportType] = useState("sales");
   const [reportData, setReportData] = useState(null);
   const [period, setPeriod] = useState({
-    startDate: new Date(new Date().setDate(new Date().getDate() - 7)),
-    endDate: new Date(),
+    startDate: new Date(new Date().setMonth(0, 1)),
+    endDate: new Date(
+      new Date().setFullYear(new Date().getFullYear() + 1, 0, 0)
+    ),
   });
 
   const { user } = useContext(AuthContext); // Assuming the token is available in AuthContext
@@ -67,7 +69,6 @@ function ReportsPage() {
               endDate: period.endDate,
             },
           });
-          console.log("Response Data: ", responseData.data);
           setDashboardData(formatDashboardData(responseData.data));
           setRevenueData(formatRevenueData(response.data));
           setSalesData(formatSalesData(response.data));

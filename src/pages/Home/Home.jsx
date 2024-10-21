@@ -36,10 +36,12 @@ function Dashboard() {
   });
   const [pieData, setPieData] = useState([]);
   const [period, setPeriod] = useState({
-    startDate: new Date(new Date().setDate(new Date().getDate() - 7)),
-    endDate: new Date(),
+    startDate: new Date(new Date().setMonth(0, 1)),
+    endDate: new Date(
+      new Date().setFullYear(new Date().getFullYear() + 1, 0, 0)
+    ),
   });
-  const [timePeriod, setTimePeriod] = useState("weekly");
+  const [timePeriod, setTimePeriod] = useState("yearly");
   const [error, setError] = useState(null);
   const [dashboardData, setDashboardData] = useState([]);
 
