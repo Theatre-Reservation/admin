@@ -134,7 +134,7 @@ function ReservationsPage() {
             <th onClick={() => sortBy("movieTitle")}>Movie Title</th>
             {/* <th onClick={() => sortBy("theater")}>Theater</th> */}
             <th>Reserved Seats</th>
-            {/* <th onClick={() => sortBy("available_seats")}>Available Seats</th> */}
+            <th onClick={() => sortBy("available_seats")}>Available Seats</th>
             <th onClick={() => sortBy("price")}>Price</th>
             <th>Actions</th>
           </tr>
@@ -145,16 +145,16 @@ function ReservationsPage() {
               {/* <td>{reservation._id}</td> */}
               <td>{reservation.movie}</td>
               {/* <td>{reservation.theater}</td> */}
-              {/* <td>{reservation.reserved_seats.join(", ")}</td> */}
+              <td>{reservation.reserved_seats.join(", ")}</td>
               <td>{reservation.available_seats}</td>
-              <td>{reservation.price}</td>
+              <td>{reservation.price * (80 - reservation.available_seats)}</td>
               <td className="edit-delete-btns">
-                <button
+                {/* <button
                   className="edit-btn"
                   onClick={() => handleEdit(reservation.id)}
                 >
                   Edit
-                </button>
+                </button> */}
                 <button
                   className="delete-btn"
                   onClick={() => deleteReservation(reservation.id)}
