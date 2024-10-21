@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from "react";
 import axios from "../../axios";
 import "./Reports.css";
 import { AuthContext } from "../../context/AuthContext";
-import Spinner from "../../components/Spinner/Spinner";
+import Spinner from "../../components/Spinner/spinner";
 
 function ReportsPage() {
   const [timePeriod, setTimePeriod] = useState("yearly");
