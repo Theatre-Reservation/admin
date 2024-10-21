@@ -3,7 +3,7 @@ import {
   BsFillArchiveFill,
   BsFillGrid3X3GapFill,
   BsPeopleFill,
-  BsFillBellFill,
+  BsCashCoin,
 } from "react-icons/bs";
 import {
   BarChart,
@@ -233,7 +233,7 @@ function Dashboard() {
         <Card
           name="Revenue"
           value={`Rs ${homeData.totalRevenue}`}
-          icon={BsFillGrid3X3GapFill}
+          icon={BsCashCoin}
         />
         <Card
           name="Total Users"
@@ -243,7 +243,7 @@ function Dashboard() {
         <Card
           name="Shows"
           value={parseInt(totalshows, 10)}
-          icon={BsFillBellFill}
+          icon={BsFillGrid3X3GapFill}
         />
       </div>
 
@@ -316,7 +316,10 @@ function Dashboard() {
         <ResponsiveContainer width="100%" height={300}>
           <PieChart>
             <Pie
-              data={pieData}
+              data={pieData.map((entry) => ({
+                ...entry,
+                "Total Revenue": round(entry["Total Revenue"] * 1000, 3),
+              }))}
               dataKey="Total Revenue"
               nameKey="Movie"
               cx="50%"
@@ -376,5 +379,11 @@ function Dashboard() {
     </main>
   );
 }
+
+// Helper function to round numbers to a specified number of decimal places
+const round = (num, decimalPlaces) => {
+  const factor = Math.pow(10, decimalPlaces);
+  return Math.round(num * factor, 2) / factor;
+};
 
 export default Dashboard;

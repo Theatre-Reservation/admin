@@ -1,11 +1,11 @@
 import React from "react";
 import {
-  BsCart3,
   BsGrid1X2Fill,
   BsFillArchiveFill,
   BsFillGrid3X3GapFill,
   BsPeopleFill,
   BsListCheck,
+  BsFilm,
   BsFillGearFill,
 } from "react-icons/bs";
 
@@ -38,7 +38,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             </li>
             <li className="sidebar-list-item">
               <Link to="/movies">
-                <BsPeopleFill className="icon" /> Movies
+                <BsFilm className="icon" /> Movies
               </Link>
             </li>
             <li className="sidebar-list-item">
