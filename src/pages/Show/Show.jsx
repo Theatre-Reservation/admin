@@ -59,6 +59,20 @@ function ShowsPage() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    if (name === "price") {
+      if (value < 0) {
+        toast.error("Price cannot be negative", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+        return;
+      }
+    }
     console.log("name", name);
     console.log("value", value);
     setEditingShow((prev) => ({

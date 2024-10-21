@@ -7,6 +7,7 @@ import ShowPage from "../Show/Show";
 import MoviePreview from "../../components/Preview/MoviePreview";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import Spinner from "../../components/Spinner/Spinner";
 
 function MoviePage() {
   const [uploading, setUploading] = useState(false);
@@ -406,11 +407,13 @@ function MoviePage() {
                 className="form-submit"
                 onClick={handleAddMovie_}
               >
-                {uploading
-                  ? "Uploading..."
-                  : editMode
-                  ? "Update Movie"
-                  : "Add Movie"}
+                {uploading ? (
+                  <Spinner size="20px" />
+                ) : editMode ? (
+                  "Update Movie"
+                ) : (
+                  "Add Movie"
+                )}
               </button>
             </form>
           </div>
