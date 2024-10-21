@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AuthContext } from "../../context/AuthContext";
-import Spinner from "../../components/Spinner/Spinner";
+import Spinner from "../../components/Spinner/spinner";
 
 function ShowsPage() {
   const { user, login, logout } = useContext(AuthContext);
