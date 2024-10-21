@@ -82,6 +82,18 @@
     /* Subtle lift on hover */
 }
 
+.generate-btn:active,
+.download-btn:active {
+    transform: translateY(0);
+    /* Reset lift effect on click */
+}
+
+.generate-btn:disabled,
+.download-btn:disabled {
+    background-color: #52ba73;
+    cursor: not-allowed;
+}
+
 .report-result {
     margin-top: 30px;
     padding: 25px;
