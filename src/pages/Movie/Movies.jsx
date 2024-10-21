@@ -3,7 +3,7 @@ import axios from "../../axios";
 import "./Movies.css";
 import { storage } from "../../firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import ShowPage from "../Show/Show";
+// import ShowPage from "../Show/Show";
 import MoviePreview from "../../components/Preview/MoviePreview";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
