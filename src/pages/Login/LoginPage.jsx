@@ -4,7 +4,7 @@ import "./LoginPage.css";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { AuthContext } from "../../context/AuthContext";
-import Spinner from "../../components/Spinner/Spinner";
+import Spinner from "../../components/Spinner/spinner";
 
 const LoginPage = () => {
   const { setAuth } = useContext(AuthContext); // To use AuthContext

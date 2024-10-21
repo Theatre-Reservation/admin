@@ -7,7 +7,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import MoviePreview from "../../components/Preview/MoviePreview";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-// import Spinner from "../../components/Spinner/Spinner";
+import Spinner from "../../components/Spinner/spinner";
 
 function MoviePage() {
   const [uploading, setUploading] = useState(false);
@@ -407,12 +407,14 @@ function MoviePage() {
                 className="form-submit"
                 onClick={handleAddMovie_}
               >
-                {uploading
-                  ? // <Spinner size="20px" />
-                    "Uploading..."
-                  : editMode
-                  ? "Update Movie"
-                  : "Add Movie"}
+                {uploading ? (
+                  <Spinner size="20px" />
+                ) : // "Uploading..."
+                editMode ? (
+                  "Update Movie"
+                ) : (
+                  "Add Movie"
+                )}
               </button>
             </form>
           </div>
