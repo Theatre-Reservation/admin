@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AuthContext } from "../../context/AuthContext";
+import Spinner from "../../components/Spinner/Spinner";
 
 function ShowsPage() {
   const { user, login, logout } = useContext(AuthContext);
@@ -14,7 +15,7 @@ function ShowsPage() {
   const [editingMode, setEditingMode] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newShow, setNewShow] = useState({
-    movie: "Deadpool & Wolverine",
+    movie: "",
     theater: "Majestic City - Colombo",
     date: "",
     time: "",
@@ -32,11 +33,11 @@ function ShowsPage() {
       try {
         // http://localhost:8000/api/v1/shows/show?theater=Majestic City - Colombo&movie=Deadpool & Wolverine
         const response = await axios.get(
-          `/shows/show?theater=${newShow.theater}&movie=${movie}`
+          `/shows/show?theater=${newShow.theater}&movie=`
         );
-        console.log("response", `/shows/show?theater=${user}&movie=${movie}`);
+        // console.log("response", `/shows/show?theater=${user}&movie=${movie}`);
         setShows(response.data);
-        console.log("Shows fetched:", response.data);
+        // console.log("Shows fetched:", response.data);
         // console.log("Shows:", shows);
       } catch (error) {
         // console.error("Error fetching shows:", error);
@@ -54,7 +55,7 @@ function ShowsPage() {
     fetchShows();
   }, []);
 
-  console.log(shows);
+  // console.log(shows);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -140,6 +141,8 @@ function ShowsPage() {
       resetForm();
     } catch (error) {
       console.error("Error updating show:", error);
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -173,18 +176,20 @@ function ShowsPage() {
         progress: undefined,
       });
       setUploading(false);
+    } finally {
+      setUploading(false);
     }
   };
 
   const showSeats = (_id) => {
-    navigate(`/movies/shows/seats/${_id}`);
+    navigate(`/shows/seats/${_id}`);
     console.log("show seats", _id);
   };
 
   return (
     <div className="shows-page">
       <div className="show-title-bar">
-        <h1>{movie}</h1>
+        <h1>Shows</h1>
         <button className="add-btn" onClick={() => setIsModalOpen(true)}>
           Add Show
         </button>
@@ -192,6 +197,7 @@ function ShowsPage() {
       <table className="shows-table">
         <thead>
           <tr>
+            <th>Movie</th>
             <th>Date</th>
             <th>Time</th>
             <th>Price</th>
@@ -202,6 +208,7 @@ function ShowsPage() {
         <tbody>
           {shows.map((show) => (
             <tr key={show._id}>
+              <td>{show.movie}</td>
               <td>{show.date}</td>
               <td>{show.time}</td>
               <td>{show.price}</td>
@@ -233,75 +240,102 @@ function ShowsPage() {
         </tbody>
       </table>
 
-      {isModalOpen &&
-        (console.log("model", newShow),
-        (
-          <div className="modal">
-            <div className="show-modal-content">
-              <div className="modal-header">
-                <h2>{editingShow ? "Edit Show" : "Add New Show"}</h2>
-                {/* Close icon */}
-                <span
-                  className="close-icon"
-                  onClick={() => {
-                    setIsModalOpen(false), setEditingMode(false), resetForm();
-                  }}
-                >
-                  &times;
-                </span>
-              </div>
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  if (editingMode) {
-                    saveShow();
-                  } else {
-                    handleAdd(newShow);
-                  }
+      {isModalOpen && (
+        // console.log("model", newShow),
+        <div className="modal">
+          <div className="show-modal-content">
+            <div className="modal-header">
+              <h2>{editingShow ? "Edit Show" : "Add New Show"}</h2>
+              {/* Close icon */}
+              <span
+                className="close-icon"
+                onClick={() => {
+                  setIsModalOpen(false),
+                    setEditingMode(false),
+                    resetForm(),
+                    setEditingShow(null);
                 }}
               >
-                <label>
-                  Date
-                  <input
-                    type="date"
-                    name="date"
-                    value={newShow.date.split("T")[0]}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </label>
-                <label>
-                  Time
-                  <input
-                    type="time"
-                    name="time"
-                    value={newShow.time}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </label>
-                <label>
-                  Price
-                  <input
-                    type="number"
-                    name="price"
-                    value={newShow.price}
-                    onChange={handleInputChange}
-                    placeholder="Price"
-                    required
-                  />
-                </label>
-                <button type="submit">
-                  {uploading
-                    ? "Updating..."
-                    : editingShow
-                    ? "Save Changes"
-                    : "Add Show"}
-                </button>
-              </form>
+                &times;
+              </span>
             </div>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                setUploading(true);
+                if (editingMode) {
+                  saveShow();
+                } else {
+                  handleAdd(newShow);
+                }
+              }}
+            >
+              <label>
+                Movie
+                <select
+                  name="movie"
+                  value={newShow.movie}
+                  onChange={handleInputChange}
+                  required
+                >
+                  <option value="" disabled>
+                    Select a movie
+                  </option>
+                  <option value="Deadpool & Wolverine">
+                    Deadpool & Wolverine
+                  </option>
+                  <option value="Inside Out 2">Inside Out 2</option>
+                  <option value="Furiosa: A Mad Max Saga">
+                    Furiosa: A Mad Max Saga
+                  </option>
+                  <option value="Twisters">Twisters</option>
+                  <option value="Inside Out 2">Inside Out 2</option>
+                </select>
+              </label>
+              <label>
+                Date
+                <input
+                  type="date"
+                  name="date"
+                  value={newShow.date.split("T")[0]}
+                  onChange={handleInputChange}
+                  required
+                />
+              </label>
+              <label>
+                Time
+                <input
+                  type="time"
+                  name="time"
+                  value={newShow.time}
+                  onChange={handleInputChange}
+                  required
+                />
+              </label>
+              <label>
+                Price
+                <input
+                  type="number"
+                  name="price"
+                  value={newShow.price}
+                  onChange={handleInputChange}
+                  placeholder="Price"
+                  required
+                />
+              </label>
+              <button type="submit">
+                {uploading ? (
+                  <Spinner size="20px" />
+                ) : editingShow ? (
+                  "Save Changes"
+                ) : (
+                  "Add Show"
+                )}
+              </button>
+            </form>
           </div>
-        ))}
+        </div>
+      )}
     </div>
   );
 }
