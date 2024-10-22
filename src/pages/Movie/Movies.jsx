@@ -8,6 +8,7 @@ import MoviePreview from "../../components/Preview/MoviePreview";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Spinner from "../../components/Spinner/spinner";
+import "react-toastify/dist/ReactToastify.css";
 
 function MoviePage() {
   const [uploading, setUploading] = useState(false);
@@ -176,22 +177,96 @@ function MoviePage() {
       .catch((error) => console.error("Error fetching movie details:", error));
   };
 
+  // const handleDeleteMovie = (id) => {
+  //   axios
+  //     .delete(`movies/${id}`)
+  //     .then(() => {
+  //       setMovies(Movies.filter((Movie) => Movie._id !== id));
+  //       toast.success("Movie deleted successfully", {
+  //         position: "top-right",
+  //         autoClose: 5000,
+  //         hideProgressBar: false,
+  //         closeOnClick: true,
+  //         pauseOnHover: true,
+  //         draggable: true,
+  //         progress: undefined,
+  //       });
+  //     })
+  //     .catch((error) => console.error("Error deleting Movie:", error));
+  // };
+
   const handleDeleteMovie = (id) => {
-    axios
-      .delete(`movies/${id}`)
-      .then(() => {
-        setMovies(Movies.filter((Movie) => Movie._id !== id));
-        toast.success("Movie deleted successfully", {
+    if (!window.confirm("Are you sure you want to delete this movie?")) {
+      return;
+    }
+
+    // Remove the movie from the UI immediately
+    const deletedMovie = Movies.find((Movie) => Movie._id === id);
+    setMovies(Movies.filter((Movie) => Movie._id !== id));
+
+    // Set a timeout to delay the database deletion for 5 seconds
+    const undoTimeout = setTimeout(async () => {
+      try {
+        await axios.delete(`movies/${id}`);
+        toast.success("Movie permanently deleted from the database.", {
           position: "top-right",
-          autoClose: 5000,
+          autoClose: 3000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
           draggable: true,
-          progress: undefined,
         });
-      })
-      .catch((error) => console.error("Error deleting Movie:", error));
+      } catch (error) {
+        console.error("Error deleting movie from the database:", error);
+        toast.error("Failed to delete movie from the database.", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+      }
+    }, 8000); // Delay actual deletion by 5 seconds
+
+    // Show Undo option in a toast notification
+    toast.info(
+      <div>
+        Movie deleted.{" "}
+        <button
+          className="undo"
+          onClick={() => handleUndo(id, deletedMovie, undoTimeout)}
+        >
+          Undo
+        </button>
+      </div>,
+      {
+        position: "top-right",
+        autoClose: 5000, // Keep the toast open for 5 seconds
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      }
+    );
+  };
+
+  const handleUndo = (id, deletedMovie, undoTimeout) => {
+    // Cancel the scheduled deletion
+    clearTimeout(undoTimeout);
+
+    // Restore the movie in the UI
+    setMovies((prevMovies) => [...prevMovies, deletedMovie]);
+
+    // Notify the user that the movie was restored
+    toast.success("Movie restored.", {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
   };
 
   const resetForm = () => {

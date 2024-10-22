@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AuthContext } from "../../context/AuthContext";
 import Spinner from "../../components/Spinner/spinner";
+import "react-toastify/dist/ReactToastify.css";
 
 function ShowsPage() {
   const { user } = useContext(AuthContext);
@@ -134,23 +135,81 @@ function ShowsPage() {
     }));
   };
 
-  // Function to delete a show
+  // Assume you have a state variable 'shows' and a setter 'setShows'
+
   const deleteShow = async (_id) => {
-    try {
-      await axios.delete(`/shows/${_id}`);
-      setShows(shows.filter((show) => show._id !== _id));
-      toast.success("Show deleted successfully", {
+    if (!window.confirm("Are you sure you want to delete this show?")) {
+      return;
+    }
+    // Store the deleted show for undo
+    const deletedShow = shows.find((show) => show._id === _id);
+
+    // Remove the show from the UI immediately
+    setShows(shows.filter((show) => show._id !== _id));
+
+    // Set a timeout to delay the database deletion for 5 seconds
+    const undoTimeout = setTimeout(async () => {
+      try {
+        await axios.delete(`/shows/${_id}`);
+        toast.success("Show permanently deleted from the database.", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+      } catch (error) {
+        console.error("Error deleting show from the database:", error);
+        toast.error("Failed to delete show from the database.", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+      }
+    }, 5000); // Delay actual deletion by 5 seconds
+
+    // Show Undo option in a toast notification
+    toast.info(
+      <div>
+        Show deleted.{" "}
+        <button
+          className="undo"
+          onClick={() => handleUndo(_id, deletedShow, undoTimeout)}
+        >
+          Undo
+        </button>
+      </div>,
+      {
         position: "top-right",
-        autoClose: 5000,
+        autoClose: 5000, // Keep the toast open for 5 seconds
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
-        progress: undefined,
-      });
-    } catch (error) {
-      console.error("Error deleting the show:", error);
-    }
+      }
+    );
+  };
+
+  const handleUndo = (_id, deletedShow, undoTimeout) => {
+    // Cancel the scheduled deletion
+    clearTimeout(undoTimeout);
+
+    // Restore the show in the UI
+    setShows((prevShows) => [...prevShows, deletedShow]);
+
+    // Notify the user that the show was restored
+    toast.success("Show restored.", {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
   };
 
   // Function to handle editing a show
@@ -283,10 +342,11 @@ function ShowsPage() {
               <td>{show.movie}</td>
               <td>{show.date}</td>
               <td>{show.time}</td>
-              <td>{show.price}</td>
+              <td>{"LKR " + show.price}</td>
               <td>
-                {show.discountAmount ||
-                  (show.price * show.discountPercentage) / 100}
+                {"LKR " +
+                  (show.discountAmount ||
+                    (show.price * show.discountPercentage) / 100)}
               </td>
               <td>
                 <button

@@ -239,6 +239,19 @@
     color: #e40f0f;
 }
 
+.undo {
+    cursor: pointer;
+    margin: 10px;
+    font-size: 1rem;
+    height: 30px;
+    padding: 5px 10px;
+    font-weight: bold;
+    color: #0b0b17;
+    background-color: #12993d;
+    border-radius: 20px;
+    transition: background-color 0.3s;
+}
+
 .modal-body input {
     display: block;
     width: 100%;

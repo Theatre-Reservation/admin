@@ -5,6 +5,7 @@ import { storage } from "../../firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import EventPreview from "../../components/Preview/EventPreview";
 import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function EventPage() {
   const [uploading, setUploading] = useState(false);
@@ -20,6 +21,14 @@ function EventPage() {
     time: "",
     runtime: "",
     ticket_price: "",
+    discountPercentage: "",
+    discountAmount: "",
+    discountExpiry: "",
+  });
+  const [discount, setDiscount] = useState({
+    percentage: "",
+    amount: "",
+    expiry: "",
   });
   const [editMode, setEditMode] = useState(false);
   const [editingEventId, setEditingEventId] = useState("");
@@ -46,29 +55,81 @@ function EventPage() {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     console.log(name, value);
-    if (name === "runtimeHours" || name === "runtimeMinutes") {
-      console.log("djshjb");
-      setRuntime((prevState) => {
-        const updatedRuntime = {
-          ...prevState,
+    if (
+      name === "runtimeHours" ||
+      name === "runtimeMinutes" ||
+      name === "discountExpiry"
+    )
+      if (name === "discountExpiry") {
+        if (value < new Date().toISOString().split("T")[0]) {
+          toast.error("Discount expiry must be a future date", {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+          return;
+        }
+
+        console.log("djshjb");
+        setRuntime((prevState) => {
+          const updatedRuntime = {
+            ...prevState,
+            [name]: value,
+          };
+          console.log("dsfjhsd", updatedRuntime);
+          // After updating runtime, update the newEvent runtime
+          setNewEvent((prevEvent) => ({
+            ...prevEvent,
+            runtime: `${updatedRuntime.runtimeHours || 0} hrs ${
+              updatedRuntime.runtimeMinutes || 0
+            } mins`,
+          }));
+          console.log("New event data runtime:", newEvent);
+        });
+      } else if (name === "price" || name === "discountAmount") {
+        if (value < 0) {
+          toast.error(`${name} cannot be negative`, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+          return;
+        }
+        setNewEvent({
+          ...newEvent,
           [name]: value,
-        };
-        console.log("dsfjhsd", updatedRuntime);
-        // After updating runtime, update the newEvent runtime
-        setNewEvent((prevEvent) => ({
-          ...prevEvent,
-          runtime: `${updatedRuntime.runtimeHours || 0} hrs ${
-            updatedRuntime.runtimeMinutes || 0
-          } mins`,
-        }));
-        console.log("New event data runtime:", newEvent);
-      });
-    } else {
-      setNewEvent({
-        ...newEvent,
-        [name]: value,
-      });
-    }
+        });
+      } else if (name === "discountPercentage") {
+        if (value < 0 || value > 100) {
+          toast.error("Discount percentage must be between 0 and 100", {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+          return;
+        }
+        setNewEvent({
+          ...newEvent,
+          [name]: value,
+        });
+      } else {
+        setNewEvent({
+          ...newEvent,
+          [name]: value,
+        });
+      }
     console.log("New event data:", newEvent);
   };
 
@@ -223,6 +284,9 @@ function EventPage() {
           time: event.time,
           runtime: event.runtime,
           ticket_price: event.ticket_price,
+          discountPercentage: event.discountPercentage,
+          discountAmount: event.discountAmount,
+          discountExpiry: event.discountExpiry,
         });
 
         const [hours, mins] = event.runtime
@@ -244,24 +308,81 @@ function EventPage() {
       .catch((error) => console.error("Error fetching event details:", error));
   };
 
+  // Assume you have a state variable 'events' and a setter 'setEvents'
+
   const handleDeleteEvent = (id) => {
-    axios
-      .delete(`events/${id}`)
-      .then(() => {
-        setEvents((prevEvents) =>
-          prevEvents.filter((event) => event._id !== id)
-        );
-        toast.success("Event deleted successfully!", {
+    if (!window.confirm("Are you sure you want to delete this event?")) {
+      return;
+    }
+    // Store the deleted event for undo
+    const deletedEvent = events.find((event) => event._id === id);
+
+    // Remove the event from the UI immediately
+    setEvents((prevEvents) => prevEvents.filter((event) => event._id !== id));
+
+    // Set a timeout to delay the database deletion for 5 seconds
+    const undoTimeout = setTimeout(async () => {
+      try {
+        await axios.delete(`events/${id}`);
+        toast.success("Event permanently deleted from the database.", {
           position: "top-right",
-          autoClose: 5000,
+          autoClose: 3000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
           draggable: true,
-          progress: undefined,
         });
-      })
-      .catch((error) => console.error("Error deleting event:", error));
+      } catch (error) {
+        console.error("Error deleting event from the database:", error);
+        toast.error("Failed to delete event from the database.", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+      }
+    }, 5000); // Delay actual deletion by 5 seconds
+
+    // Show Undo option in a toast notification
+    toast.info(
+      <div>
+        Event deleted.{" "}
+        <button
+          className="undo"
+          onClick={() => handleUndo(id, deletedEvent, undoTimeout)}
+        >
+          Undo
+        </button>
+      </div>,
+      {
+        position: "top-right",
+        autoClose: 5000, // Keep the toast open for 5 seconds
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      }
+    );
+  };
+
+  const handleUndo = (id, deletedEvent, undoTimeout) => {
+    // Cancel the scheduled deletion
+    clearTimeout(undoTimeout);
+
+    // Restore the event in the UI
+    setEvents((prevEvents) => [...prevEvents, deletedEvent]);
+
+    // Notify the user that the event was restored
+    toast.success("Event restored.", {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
   };
 
   return (
@@ -282,6 +403,7 @@ function EventPage() {
             <th>Runtime</th>
             <th>Time</th>
             <th>Price</th>
+            <th>discountAmount</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -294,6 +416,12 @@ function EventPage() {
               <td>{event.runtime}</td>
               <td>{event.time}</td>
               <td>{"LKR " + event.ticket_price}</td>
+              <td>
+                {"LKR " +
+                  (event.discountAmount ||
+                    (event.price * event.discountPercentage) / 100 ||
+                    "0")}
+              </td>
               <td className="edit-delete-btns">
                 <button
                   className="edit-btn"
@@ -344,6 +472,7 @@ function EventPage() {
                       value={newEvent.title}
                       onChange={handleInputChange}
                       placeholder="Event Title"
+                      required
                     />
                   </label>
                   <label>
@@ -353,6 +482,7 @@ function EventPage() {
                       value={newEvent.venue}
                       onChange={handleInputChange}
                       placeholder="Venue"
+                      required
                     />
                   </label>
                   <label>
@@ -361,6 +491,8 @@ function EventPage() {
                       value={newEvent.description}
                       onChange={handleInputChange}
                       placeholder="Description"
+                      rows={5}
+                      required
                     />
                   </label>
                   <div>
@@ -374,19 +506,20 @@ function EventPage() {
                         placeholder="Image URL"
                       />
                     </label>
+                    <label>
+                      Date
+                      <input
+                        type="Date"
+                        name="date"
+                        value={newEvent.date.split("T")[0]}
+                        onChange={handleInputChange}
+                        placeholder="Date"
+                        required
+                      />
+                    </label>
                   </div>
                 </div>
                 <div className="column">
-                  <label>
-                    Date
-                    <input
-                      type="Date"
-                      name="date"
-                      value={newEvent.date.split("T")[0]}
-                      onChange={handleInputChange}
-                      placeholder="Date"
-                    />
-                  </label>
                   {/* <div className="runtime">
                     <label>
                       Runtime
@@ -406,16 +539,6 @@ function EventPage() {
                       />
                     </label>
                   </div> */}
-                  <label>
-                    Runtime
-                    <input
-                      type="text"
-                      name="runtime"
-                      value={newEvent.runtime}
-                      onChange={handleInputChange}
-                      placeholder="e.g., 2 hrs 10 mins"
-                    />
-                  </label>
 
                   <label>
                     Time
@@ -424,6 +547,7 @@ function EventPage() {
                       name="time"
                       value={convertTo24HourFormat(newEvent.time)}
                       onChange={handleTimeChange} // Handles the time input change
+                      required
                     />
                   </label>
                   <label>
@@ -434,6 +558,42 @@ function EventPage() {
                       value={newEvent.ticket_price}
                       onChange={handleInputChange}
                       placeholder="Price"
+                      required
+                    />
+                  </label>
+                  <label>
+                    Discount Percentage
+                    <input
+                      type="number"
+                      name="discountPercentage"
+                      value={newEvent.discountPercentage || ""}
+                      onChange={handleInputChange}
+                      placeholder="Enter discount percentage"
+                      disabled={newEvent.discountAmount}
+                    />
+                  </label>
+                  <label>
+                    Discount Amount
+                    <input
+                      type="number"
+                      name="discountAmount"
+                      value={newEvent.discountAmount || ""}
+                      onChange={handleInputChange}
+                      placeholder="Enter discount amount"
+                      disabled={newEvent.discountPercentage}
+                    />
+                  </label>
+                  <label>
+                    Discount Expiry
+                    <input
+                      type="date"
+                      name="discountExpiry"
+                      value={
+                        newEvent.discountExpiry
+                          ? newEvent.discountExpiry.split("T")[0]
+                          : ""
+                      }
+                      onChange={handleInputChange}
                     />
                   </label>
                 </div>
