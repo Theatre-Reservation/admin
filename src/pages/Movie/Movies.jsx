@@ -375,31 +375,67 @@ function MoviePage() {
                     />
                   </label>
                   <label>
-                    <input
-                      type="text"
+                    <select
                       name="language"
                       value={newMovie.language}
                       onChange={handleInputChange}
                       placeholder="Movie Language"
-                    />
+                    >
+                      <option value="">Select Language</option>
+                      <option value="English">English</option>
+                      <option value="Hindi">Hindi</option>
+                      <option value="Tamil">Tamil</option>
+                      <option value="Sinhala">Sinhala</option>
+                    </select>
                   </label>
                   <label>
-                    <input
+                    <select
                       type="text"
                       name="main_genre"
                       value={newMovie.main_genre}
                       onChange={handleInputChange}
                       placeholder="Main genre"
-                    />
+                    >
+                      <option value="">Select Genre</option>
+                      <option value="Action">Action</option>
+                      <option value="Adventure">Adventure</option>
+                      <option value="Comedy">Comedy</option>
+                      <option value="Drama">Drama</option>
+                      <option value="Fantasy">Fantasy</option>
+                      <option value="Horror">Horror</option>
+                      <option value="Mystery">Mystery</option>
+                      <option value="Romance">Romance</option>
+                      <option value="Sci-Fi">Sci-Fi</option>
+                      <option value="Thriller">Thriller</option>
+                    </select>
                   </label>
                   <label>
-                    <input
-                      type="text"
+                    <select
+                      multiple
                       name="sub_genres"
                       value={newMovie.sub_genres}
-                      onChange={handleInputChange}
+                      onChange={(e) =>
+                        setNewMovie({
+                          ...newMovie,
+                          sub_genres: Array.from(
+                            e.target.selectedOptions,
+                            (option) => option.value
+                          ),
+                        })
+                      }
                       placeholder="Sub Genre"
-                    />
+                    >
+                      <option value="Action">Action</option>
+                      <option value="Adventure">Adventure</option>
+                      <option value="Comedy">Comedy</option>
+                      <option value="Drama">Drama</option>
+                      <option value="Fantasy">Fantasy</option>
+                      <option value="Horror">Horror</option>
+                      <option value="Mystery">Mystery</option>
+                      <option value="Romance">Romance</option>
+                      <option value="Sci-Fi">Sci-Fi</option>
+                      <option value="Thriller">Thriller</option>
+                    </select>
                   </label>
                   <label>
                     Poster Image

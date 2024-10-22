@@ -202,9 +202,17 @@
     margin-top: 5px;
 }
 
+.modal-body input {
+    display: block;
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
 .modal select {
     display: block;
-    width: 300px;
+    width: 319px;
     padding: 8px;
     margin-bottom: 1rem;
     border: 1px solid #888484;
@@ -252,14 +260,6 @@
     transition: background-color 0.3s;
 }
 
-.modal-body input {
-    display: block;
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-}
 
 .modal-footer {
     margin-top: 1rem;

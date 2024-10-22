@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./Settings.css";
+import { AuthContext } from "../../context/AuthContext";
 
 function SettingsPage() {
   // State to manage settings options
