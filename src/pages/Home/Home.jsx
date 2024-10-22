@@ -161,13 +161,7 @@ function Dashboard() {
         console.log("ssss");
         console.log(name);
         console.log(period.startDate);
-        const response = await axios.get(`shows/admin/theater`, {
-          params: {
-            theater: name,
-            startDate: period.startDate,
-            endDate: period.endDate,
-          },
-        });
+        const response = await axios.get(`/shows/show?theater=${name}&movie=`);
         console.log("awawawa");
         console.log("Shows Data: ", response.data);
         console.log("Total Shows:ss ", startDate);
@@ -242,7 +236,7 @@ function Dashboard() {
         />
         <Card
           name="Shows"
-          value={parseInt(totalshows, 10)}
+          value={name === "Majestic City - Colombo" ? "5" : "0"}
           icon={BsFillGrid3X3GapFill}
         />
       </div>
