@@ -8,7 +8,7 @@ import { AuthContext } from "../../context/AuthContext";
 import Spinner from "../../components/Spinner/spinner";
 
 function ShowsPage() {
-  const { user, login, logout } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const [uploading, setUploading] = useState(false);
   const [shows, setShows] = useState([]);
   const [editingShow, setEditingShow] = useState(null);
@@ -16,32 +16,67 @@ function ShowsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newShow, setNewShow] = useState({
     movie: "",
-    theater: "Majestic City - Colombo",
+    theater: "",
     date: "",
     time: "",
     price: "",
     reserved_seats: ["A5", "C7", "F2"],
     available_seats: "80",
+    discountPercentage: "",
+    discountAmount: "",
+    discountExpiry: "",
+  });
+  const [discount, setDiscount] = useState({
+    percentage: "",
+    amount: "",
+    expiry: "",
   });
   const navigate = useNavigate();
 
-  const movie = "Deadpool & Wolverine";
+  // const movie = "Deadpool & Wolverine";
 
   // Fetch show data from an API
   useEffect(() => {
     const fetchShows = async () => {
-      try {
-        // http://localhost:8000/api/v1/shows/show?theater=Majestic City - Colombo&movie=Deadpool & Wolverine
-        const response = await axios.get(
-          `/shows/show?theater=${newShow.theater}&movie=`
-        );
-        // console.log("response", `/shows/show?theater=${user}&movie=${movie}`);
-        setShows(response.data);
-        // console.log("Shows fetched:", response.data);
-        // console.log("Shows:", shows);
-      } catch (error) {
-        // console.error("Error fetching shows:", error);
-        toast.error("Error fetching shows", {
+      if (user) {
+        try {
+          const token = localStorage.getItem("token"); // Get token from localStorage
+          const theater = parseTheaterFromToken(token); // Extract theater from token
+          console.log("Theater: ", theater);
+          setNewShow({ ...newShow, theater: theater });
+          // http://localhost:8000/api/v1/shows/show?theater=Majestic City - Colombo&movie=Deadpool & Wolverine
+          const response = await axios.get(
+            `/shows/show?theater=${theater}&movie=`
+          );
+          // console.log("response", `/shows/show?theater=${user}&movie=${movie}`);
+          setShows(response.data);
+          // console.log("Shows fetched:", response.data);
+          // console.log("Shows:", shows);
+        } catch (error) {
+          // console.error("Error fetching shows:", error);
+          toast.error("Error fetching shows", {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+        }
+      }
+    };
+    fetchShows();
+  }, [user]);
+  console.log("shows", newShow);
+
+  // console.log(shows);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    if (name === "price" || name === "discountAmount") {
+      if (value < 0) {
+        toast.error(`${name} cannot be negative`, {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -50,18 +85,24 @@ function ShowsPage() {
           draggable: true,
           progress: undefined,
         });
+        return;
       }
-    };
-    fetchShows();
-  }, []);
-
-  // console.log(shows);
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    if (name === "price") {
-      if (value < 0) {
-        toast.error("Price cannot be negative", {
+    } else if (name === "discountPercentage") {
+      if (value < 0 || value > 100) {
+        toast.error("Discount percentage must be between 0 and 100", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+        return;
+      }
+    } else if (name === "discountExpiry") {
+      if (value < new Date().toISOString().split("T")[0]) {
+        toast.error("Discount expiry must be a future date", {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -75,6 +116,14 @@ function ShowsPage() {
     }
     console.log("name", name);
     console.log("value", value);
+    setDiscount((prev) => ({
+      ...prev,
+      [name === "discountPercentage"
+        ? "percentage"
+        : name === "discountAmount"
+        ? "amount"
+        : "expiry"]: value,
+    }));
     setEditingShow((prev) => ({
       ...prev,
       [name]: value,
@@ -116,6 +165,9 @@ function ShowsPage() {
       time: showToEdit.time,
       price: showToEdit.price,
       available_seats: showToEdit.available_seats,
+      discountPercentage: showToEdit.discountPercentage,
+      discountAmount: showToEdit.discountAmount,
+      discountExpiry: showToEdit.discountExpiry,
     });
     setIsModalOpen(true); // Open the modal
   };
@@ -128,6 +180,9 @@ function ShowsPage() {
       time: "",
       price: "",
       // availableSeats: "",
+      discountPercentage: "",
+      discountAmount: "",
+      discountExpiry: "",
     });
   };
 
@@ -135,6 +190,7 @@ function ShowsPage() {
   const saveShow = async () => {
     try {
       await axios.patch(`/shows/${editingShow._id}`, editingShow);
+      await axios.post(`/shows/${editingShow._id}/apply-discount`, discount);
       setShows((prevShows) =>
         prevShows.map((show) =>
           show._id === editingShow._id ? editingShow : show
@@ -192,6 +248,7 @@ function ShowsPage() {
       setUploading(false);
     } finally {
       setUploading(false);
+      resetForm();
     }
   };
 
@@ -215,6 +272,7 @@ function ShowsPage() {
             <th>Date</th>
             <th>Time</th>
             <th>Price</th>
+            <th>discountAmount</th>
             <th>Available Seats</th>
             <th>Actions</th>
           </tr>
@@ -227,7 +285,10 @@ function ShowsPage() {
               <td>{show.time}</td>
               <td>{show.price}</td>
               <td>
-                {/* <SeatsPage _id={show._id} /> */}
+                {show.discountAmount ||
+                  (show.price * show.discountPercentage) / 100}
+              </td>
+              <td>
                 <button
                   className="show-seats-btn"
                   onClick={() => showSeats(show._id)}
@@ -255,19 +316,17 @@ function ShowsPage() {
       </table>
 
       {isModalOpen && (
-        // console.log("model", newShow),
         <div className="modal">
           <div className="show-modal-content">
             <div className="modal-header">
               <h2>{editingShow ? "Edit Show" : "Add New Show"}</h2>
-              {/* Close icon */}
               <span
                 className="close-icon"
                 onClick={() => {
-                  setIsModalOpen(false),
-                    setEditingMode(false),
-                    resetForm(),
-                    setEditingShow(null);
+                  setIsModalOpen(false);
+                  setEditingMode(false);
+                  resetForm();
+                  setEditingShow(null);
                 }}
               >
                 &times;
@@ -284,59 +343,101 @@ function ShowsPage() {
                 }
               }}
             >
-              <label>
-                Movie
-                <select
-                  name="movie"
-                  value={newShow.movie}
-                  onChange={handleInputChange}
-                  required
-                >
-                  <option value="" disabled>
-                    Select a movie
-                  </option>
-                  <option value="Deadpool & Wolverine">
-                    Deadpool & Wolverine
-                  </option>
-                  <option value="Inside Out 2">Inside Out 2</option>
-                  <option value="Furiosa: A Mad Max Saga">
-                    Furiosa: A Mad Max Saga
-                  </option>
-                  <option value="Twisters">Twisters</option>
-                  <option value="Inside Out 2">Inside Out 2</option>
-                </select>
-              </label>
-              <label>
-                Date
-                <input
-                  type="date"
-                  name="date"
-                  value={newShow.date.split("T")[0]}
-                  onChange={handleInputChange}
-                  required
-                />
-              </label>
-              <label>
-                Time
-                <input
-                  type="time"
-                  name="time"
-                  value={newShow.time}
-                  onChange={handleInputChange}
-                  required
-                />
-              </label>
-              <label>
-                Price
-                <input
-                  type="number"
-                  name="price"
-                  value={newShow.price}
-                  onChange={handleInputChange}
-                  placeholder="Price"
-                  required
-                />
-              </label>
+              <div className="form-content">
+                <div className="column">
+                  <label>
+                    Movie
+                    <select
+                      name="movie"
+                      value={newShow.movie}
+                      onChange={handleInputChange}
+                      required
+                    >
+                      <option value="" disabled>
+                        Select a movie
+                      </option>
+                      <option value="Deadpool & Wolverine">
+                        Deadpool & Wolverine
+                      </option>
+                      <option value="Inside Out 2">Inside Out 2</option>
+                      <option value="Furiosa: A Mad Max Saga">
+                        Furiosa: A Mad Max Saga
+                      </option>
+                      <option value="Twisters">Twisters</option>
+                      <option value="Inside Out 2">Inside Out 2</option>
+                    </select>
+                  </label>
+                  <label>
+                    Date
+                    <input
+                      type="date"
+                      name="date"
+                      value={newShow.date.split("T")[0]}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </label>
+                  <label>
+                    Time
+                    <input
+                      type="time"
+                      name="time"
+                      value={newShow.time}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </label>
+                  <label>
+                    Price
+                    <input
+                      type="number"
+                      name="price"
+                      value={newShow.price}
+                      onChange={handleInputChange}
+                      placeholder="Price"
+                      required
+                    />
+                  </label>
+                </div>
+                <div className="column">
+                  <label>
+                    Discount Percentage
+                    <input
+                      type="number"
+                      name="discountPercentage"
+                      value={newShow.discountPercentage || ""}
+                      onChange={handleInputChange}
+                      placeholder="Enter discount percentage"
+                      disabled={newShow.discountAmount}
+                    />
+                  </label>
+                  <label>
+                    Discount Amount
+                    <input
+                      type="number"
+                      name="discountAmount"
+                      value={newShow.discountAmount || ""}
+                      onChange={handleInputChange}
+                      placeholder="Enter discount amount"
+                      disabled={newShow.discountPercentage}
+                    />
+                  </label>
+                  <label>
+                    Discount Expiry
+                    <input
+                      type="date"
+                      name="discountExpiry"
+                      value={
+                        newShow.discountExpiry
+                          ? newShow.discountExpiry.split("T")[0]
+                          : ""
+                      }
+                      onChange={handleInputChange}
+                    />
+                  </label>
+                </div>
+              </div>
+
               <button type="submit">
                 {uploading ? (
                   <Spinner size="20px" />
@@ -353,5 +454,11 @@ function ShowsPage() {
     </div>
   );
 }
+
+// Helper function to parse theater from token
+const parseTheaterFromToken = (token) => {
+  const decodedToken = JSON.parse(atob(token.split(".")[1])); // Decode JWT
+  return decodedToken.Name; // Assuming "theater" is a field in the token
+};
 
 export default ShowsPage;
