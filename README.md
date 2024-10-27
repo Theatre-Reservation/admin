@@ -2,7 +2,7 @@
 
 theater-admin-dashboard
 
-<dev>
+<pre>
 ├── src/
 │   ├── assets/
 │   │   ├── images/
@@ -37,4 +37,4 @@ theater-admin-dashboard
 │   └── index.css
 └── README.md
 
-</dev>
+</pre>
