@@ -2,6 +2,8 @@
 
 This project is an **Admin Dashboard** designed to manage theater reservations, shows, seating arrangements, and generate insightful reports. Developed with a focus on user-friendliness, scalability, and maintainability, this dashboard provides theater administrators with all the essential tools needed to efficiently manage theater operations.
 
+<b>link</b> - https://flash-ticket-admin.netlify.app/
+
 ## 🌟 Features
 
 - **Dynamic Dashboard**: Real-time data display on reservations, shows, and seating.
@@ -10,6 +12,28 @@ This project is an **Admin Dashboard** designed to manage theater reservations, 
 - **Seat Selection**: Interactive seat selection and updates for accurate seating management.
 - **Report Generation**: Generate custom reports by time period (daily, weekly, monthly) on revenue, popular shows, and more.
 - **Authentication**: Secure login to restrict access to authorized administrators only.
+
+## Admin Interfaces
+
+<p float="left">
+    <img src="/public/images/image1.png" width="45%" />
+    <img src="/public/images/image.png" width="45%" />
+</p>
+<p float="left">
+    <img src="/public/images/image-1.png" width="45%" />
+    <img src="/public/images/image-2.png" width="45%" />
+</p>
+<p float="left">
+    <img src="/public/images/image-3.png" width="45%" />
+    <img src="/public/images/image-4.png" width="45%" />
+</p>
+<p float="left">
+    <img src="/public/images/image-5.png" width="45%" />
+    <img src="/public/images/image-6.png" width="45%" />
+</p>
+<p float="left">
+    <img src="/public/images/image-7.png" width="45%" />
+</p>
 
 ## 📂 Project Structure
 
@@ -62,24 +86,21 @@ project_root/
 - **MongoDB** (hosted)
 - **npm**
 
-### Admin Interfaces
+### Installation
 
-<p float="left">
-    <img src="/public/images/image1.png" width="50%" />
-    <img src="/public/images/image.png" width="50%" />
-</p>
-<p float="left">
-    <img src="/public/images/image-1.png" width="50%" />
-    <img src="/public/images/image-2.png" width="50%" />
-</p>
-<p float="left">
-    <img src="/public/images/image-3.png" width="50%" />
-    <img src="/public/images/image-4.png" width="50%" />
-</p>
-<p float="left">
-    <img src="/public/images/image-5.png" width="50%" />
-    <img src="/public/images/image-6.png" width="50%" />
-</p>
-<p float="left">
-    <img src="/public/images/image-7.png" width="50%" />
-</p>
+1. **Clone the repository**:
+
+   ```bash
+   git clone https://github.com/yourusername/theater-admin-dashboard.git
+   ```
+
+2. **Install dependencies**:
+
+   ```bash
+   npm install
+   ```
+
+3. **Start the development server**:
+   ```bash
+   npm start
+   ```
