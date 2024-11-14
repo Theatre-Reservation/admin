@@ -74,7 +74,7 @@ project_root/
 - **Frontend**: React, CSS
 - **Backend**: Node.js, Express
 - **Database**: MongoDB
-- **State Management**: Context API or Redux (optional for larger state needs)
+- **State Management**: React Hooks
 - **Authentication**: JWT-based secure login
 - **API**: RESTful APIs for data management and operations
 
