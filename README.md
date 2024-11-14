@@ -91,7 +91,7 @@ project_root/
 1. **Clone the repository**:
 
    ```bash
-   git clone https://github.com/yourusername/theater-admin-dashboard.git
+   git clone https://github.com:Theatre-Reservation/admin.git
    ```
 
 2. **Install dependencies**:
