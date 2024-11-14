@@ -2,6 +2,11 @@
 
 theater-admin-dashboard
 
+# Admin Interface
+
+
+
+# Folder Structure
 <pre>
 ├── src/
 │   ├── assets/
